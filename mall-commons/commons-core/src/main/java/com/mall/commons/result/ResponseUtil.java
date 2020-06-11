@@ -40,7 +40,8 @@ public class ResponseUtil<T> {
     public ResponseData<T> setErrorMsg(Integer code, String msg) {
         this.responseData.setSuccess(false);
         this.responseData.setMessage(msg);
-        responseData.setCode(500);
+        // responseData.setCode(500);
+        responseData.setCode(code);
         return this.responseData;
     }
 }

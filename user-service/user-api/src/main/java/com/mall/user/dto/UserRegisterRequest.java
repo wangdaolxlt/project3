@@ -17,6 +17,9 @@ public class UserRegisterRequest extends AbstractRequest {
     private String userPwd;
     private String email;
 
+    /**
+     * 数据校验
+     */
     @Override
     public void requestCheck() {
         if(StringUtils.isBlank(userName)||StringUtils.isBlank(userPwd)){

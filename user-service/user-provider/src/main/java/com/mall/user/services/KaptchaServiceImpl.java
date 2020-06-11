@@ -60,19 +60,23 @@ public class KaptchaServiceImpl implements IKaptchaService {
         KaptchaCodeResponse response=new KaptchaCodeResponse();
         try{
             request.requestCheck();
+            // 从redis根据以uuid作为key获得验证码的值
             String redisKey = KAPTCHA_UUID+request.getUuid();
             RBucket<String> rBucket=redissonClient.getBucket(redisKey);
             String code=rBucket.get();
             log.info("请求的redisKey={},请求的code={},从redis获得的code={}",redisKey,request.getCode(),code);
+            // 上传的值和redis中的值相等, 返回正确代码和信息
             if(StringUtils.isNotBlank(code)&&request.getCode().equalsIgnoreCase(code)){
                 response.setCode(SysRetCodeConstants.SUCCESS.getCode());
                 response.setMsg(SysRetCodeConstants.SUCCESS.getMessage());
                 return response;
             }
+            // 上传的值和redis中的值不相等, 返回错误代码和信息
             response.setCode(SysRetCodeConstants.KAPTCHA_CODE_ERROR.getCode());
             response.setMsg(SysRetCodeConstants.KAPTCHA_CODE_ERROR.getMessage());
         }catch (Exception e){
             log.error("KaptchaServiceImpl.validateKaptchaCode occur Exception :"+e);
+            // 设置错误代码和错误信息
             ExceptionProcessorUtils.wrapperHandlerException(response,e);
         }
         return response;

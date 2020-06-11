@@ -29,10 +29,10 @@ spring:
       max-wait: 3000
       min-idle: 4
   mail:
-    host: smtp.163.com
+    host: smtp.yeah.net
     port: 25
-    username: ciggarnot@163.com
-    password: SNTGFTIEAJUMRHCT
+    username: lucas_tung@yeah.net
+    password: VNIOTUMCJUZAKJOQ
 #  ##以下下配置是springboot autoconfig 认初始化时会加载的参数，但是user可以重现构建一下参数
 #  ##自定义构造的bean可查看kafkaConfig
 #  kafka:
@@ -81,3 +81,9 @@ lock:
     singleton: true
     ## 全局path前缀,常用来区分不同的应用
     namespace: zkLock
+verify:
+  mail:
+    subject: CSMALL用户激活邮件
+    addresser: lucas_tung@yeah.net
+    msg-prefix: http://localhost:8080/user/verify?uid=
+

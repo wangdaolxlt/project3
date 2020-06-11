@@ -20,10 +20,10 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(tokenIntercepter())
-//                .addPathPatterns("/shopping/**")
-//                .addPathPatterns("/user/**")
-//                .addPathPatterns("/cashier/**")
-//                .excludePathPatterns("/error");
+               .addPathPatterns("/shopping/**")
+               .addPathPatterns("/user/**")
+               .addPathPatterns("/cashier/**")
+               .excludePathPatterns("/error");
         ;
     }
 }

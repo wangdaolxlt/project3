@@ -1,7 +1,6 @@
 package com.mall.user.dal.entitys;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -11,6 +10,9 @@ import java.util.Date;
 @Table(name = "tb_member")
 @Data
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Member {
     @Id
     private Long id;
