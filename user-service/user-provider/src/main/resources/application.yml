@@ -11,9 +11,9 @@ pagehelper:
   support-methods-arguments: true
   params: count=countSql
 
-#verify:
-#  mail:
-#    subject: CSMALL用户激活邮件
-#    addresser: lucas_tung@yeah.net
-#    msg-prefix: http://localhost:8080/user/verify?uid=
+verify:
+  mail:
+    subject: CSMALL用户激活邮件
+    addresser: lucas_tung@yeah.net
+    msg-prefix: http://localhost:8080/user/verify?uid=
 

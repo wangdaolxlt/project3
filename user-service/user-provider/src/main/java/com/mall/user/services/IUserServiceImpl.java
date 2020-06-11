@@ -11,6 +11,7 @@ import com.mall.user.dal.persistence.MemberMapper;
 import com.mall.user.dal.persistence.UserVerifyMapper;
 import com.mall.user.dto.*;
 import com.mall.user.utils.JwtTokenUtils;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
@@ -38,6 +39,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 @ConfigurationProperties(prefix = "verify.mail")
+@Data
 public class IUserServiceImpl implements IUserService {
     @Autowired
     MemberMapper memberMapper;
@@ -130,13 +132,13 @@ public class IUserServiceImpl implements IUserService {
      */
     public void sendEmail(String uuid, UserRegisterRequest registerRequest) {
         SimpleMailMessage message = new SimpleMailMessage();
-        // message.setSubject(subject);
-        // message.setFrom(addresser);
-        message.setSubject("CSMALL");
-        message.setFrom("lucas_tung@yeah.net");
+        message.setSubject(subject);
+        message.setFrom(addresser);
+        // message.setSubject("CSMALL");
+        // message.setFrom("lucas_tung@yeah.net");
         message.setTo(registerRequest.getEmail());
-        // message.setText(msgPrefix + uuid + "&username=" + registerRequest.getUserName());
-        message.setText("http://localhost:8080/user/verify?uid=" + uuid + "&username=" + registerRequest.getUserName());
+        message.setText(msgPrefix + uuid + "&username=" + registerRequest.getUserName());
+        // message.setText("http://localhost:8080/user/verify?uid=" + uuid + "&username=" + registerRequest.getUserName());
 
         javaMailSender.send(message);
 

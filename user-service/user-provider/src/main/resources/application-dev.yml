@@ -81,9 +81,4 @@ lock:
     singleton: true
     ## 全局path前缀,常用来区分不同的应用
     namespace: zkLock
-verify:
-  mail:
-    subject: CSMALL用户激活邮件
-    addresser: lucas_tung@yeah.net
-    msg-prefix: http://localhost:8080/user/verify?uid=
 
