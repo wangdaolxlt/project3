@@ -18,7 +18,8 @@ public class CartItemConverter {
         cartProduct.setProductId(item.getId());
         cartProduct.setProductName(item.getTitle());
         cartProduct.setSalePrice(item.getPrice());
-        cartProduct.setProductImg(item.getImages()[0]);
+//        cartProduct.setProductImg(item.getImages()[0]);
+        cartProduct.setProductImg(item.getImages().get(0));
         if(item.getLimitNum()==null){
             cartProduct.setLimitNum(Long.valueOf(item.getNum()));
         }else if(item.getLimitNum()<0&&item.getNum()<0) {

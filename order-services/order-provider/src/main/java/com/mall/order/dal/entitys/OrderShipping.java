@@ -1,5 +1,7 @@
 package com.mall.order.dal.entitys;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 import javax.persistence.*;
 
@@ -61,7 +63,6 @@ public class OrderShipping {
     private String receiverZip;
 
     private Date created;
-
     private Date updated;
 
     /**

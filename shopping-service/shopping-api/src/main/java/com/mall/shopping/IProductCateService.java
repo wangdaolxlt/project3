@@ -11,8 +11,9 @@ import com.mall.shopping.dto.AllProductCateRequest;
 public interface IProductCateService {
     /**
      * 获取所有产品分类
-     * @param request
+     * @paramrequest
      * @return
      */
     AllProductCateResponse getAllProductCate(AllProductCateRequest request);
+    AllProductCateResponse getAllProductCategory();
 }

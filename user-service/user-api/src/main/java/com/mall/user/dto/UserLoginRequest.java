@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
  * create-date: 2019/7/22-13:11
  */
 @Data
-public class UserLoginRequest extends AbstractRequest {
+public class  UserLoginRequest extends AbstractRequest {
     private String userName;
     private String password;
 
