@@ -35,7 +35,7 @@ public abstract class AbstranctTransPipelineFactory <T extends AbstractRequest> 
         convert.convertRequest2Ctx(obj, context);
 
         //创建管道
-        TransPipeline pipeline = createPipeline(context);
+        TransPipeline pipeline = createPipeline(absCtx);
         //build管道
         doBuild(pipeline);
         //返回

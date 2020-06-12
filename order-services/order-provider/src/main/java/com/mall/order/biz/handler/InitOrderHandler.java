@@ -14,6 +14,7 @@ import com.mall.order.dal.persistence.OrderItemMapper;
 import com.mall.order.dal.persistence.OrderMapper;
 import com.mall.order.dto.CartProductDto;
 import com.mall.order.utils.GlobalIdGeneratorUtil;
+import com.mall.user.constants.SysRetCodeConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -37,6 +38,11 @@ import java.util.UUID;
 @Component
 public class InitOrderHandler extends AbstractTransHandler {
 
+    @Autowired
+    private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderItemMapper orderItemMapper;
 
     @Override
     public boolean isAsync() {
@@ -44,9 +50,55 @@ public class InitOrderHandler extends AbstractTransHandler {
     }
 
     @Override
+    @Transactional
     public boolean handle(TransHandlerContext context) {
+        CreateOrderContext createOrderContext = (CreateOrderContext) context;
+
+        //插入订单表
+        Order order = new Order();
+        String orderId = UUID.randomUUID().toString();
+        order.setOrderId(orderId);
+        order.setUserId(createOrderContext.getUserId());
+        order.setBuyerNick(createOrderContext.getBuyerNickName());
+        order.setPayment(createOrderContext.getOrderTotal());
+        System.out.println(new Date());
+        order.setCreateTime(new Date());
+        order.setUpdateTime(new Date());
+        order.setStatus(OrderConstants.ORDER_STATUS_INIT);
+        int orderInsert = orderMapper.insert(order);
+        if(orderInsert < 1){
+            throw new BizException(OrderRetCode.DB_EXCEPTION.getCode(), OrderRetCode.DB_EXCEPTION.getMessage());
+        }
 
 
+        List<Long> buyProductIds = new ArrayList();
+        //插入订单商品关联表
+        List<CartProductDto> cartProductDtoList = createOrderContext.getCartProductDtoList();
+        for (CartProductDto cartProductDto : cartProductDtoList) {
+            OrderItem orderItem = new OrderItem();
+            String orderItemId = UUID.randomUUID().toString();
+            orderItem.setId(orderItemId);
+            orderItem.setItemId(cartProductDto.getProductId());
+            orderItem.setOrderId(orderId);
+            orderItem.setNum(cartProductDto.getProductNum().intValue());
+            orderItem.setPrice(cartProductDto.getSalePrice().doubleValue());
+            orderItem.setTitle(cartProductDto.getProductName());
+            orderItem.setPicPath(cartProductDto.getProductImg());
+            BigDecimal total = cartProductDto.getSalePrice().multiply(new BigDecimal(cartProductDto.getProductNum()));
+            orderItem.setTotalFee(total.doubleValue());
+
+            //已锁定仓库
+            orderItem.setStatus(1);
+            buyProductIds.add(cartProductDto.getProductId());
+
+            int orderItemInsert = orderItemMapper.insert(orderItem);
+            if(orderItemInsert < 1){
+                throw new BizException(OrderRetCode.DB_EXCEPTION.getCode(), OrderRetCode.DB_EXCEPTION.getMessage());
+            }
+        }
+
+        createOrderContext.setOrderId(orderId);
+        createOrderContext.setBuyProductIds(buyProductIds);
         return true;
     }
 }
