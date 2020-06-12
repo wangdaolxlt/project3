@@ -15,10 +15,11 @@ public interface IProductService {
 
     /**
      * 查看商品明细
-     * @param request
+     * @paramrequest
      * @return
      */
     ProductDetailResponse getProductDetail(ProductDetailRequest request);
+    ProductDetailResponse getProductDetails(Integer id);
 
     /**
      * 查询所有商品（分页）

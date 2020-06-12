@@ -2,6 +2,7 @@ package com.mall.shopping.bootstrap;
 
 import com.mall.shopping.dto.AddCartRequest;
 import com.mall.shopping.dto.AllProductCateRequest;
+import com.mall.shopping.dto.NavListResponse;
 import com.mall.shopping.dto.ProductDetailRequest;
 import com.mall.shopping.*;
 import org.junit.Test;
@@ -34,7 +35,8 @@ public class ShoppingProviderApplicationTests {
 
     @Test
     public void testContentService() throws IOException {
-        contentService.queryNavList();
+        NavListResponse navListResponse = contentService.queryNavList();
+        System.out.println(navListResponse);
         System.in.read();
     }
 
@@ -64,7 +66,7 @@ public class ShoppingProviderApplicationTests {
     public void testProductService() throws IOException {
         ProductDetailRequest productDetailRequest = new ProductDetailRequest();
         productDetailRequest.setId(100023501L);
-        productService.getProductDetail(productDetailRequest);
+//        productService.getProductDetail(productDetailRequest);
 
         // ----------------------------------------------------------------------------
 
