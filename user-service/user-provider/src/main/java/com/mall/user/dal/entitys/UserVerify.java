@@ -1,7 +1,6 @@
 package com.mall.user.dal.entitys;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -10,6 +9,9 @@ import java.util.Date;
 
 @Table(name = "tb_user_verify")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 public class UserVerify {
     @Id

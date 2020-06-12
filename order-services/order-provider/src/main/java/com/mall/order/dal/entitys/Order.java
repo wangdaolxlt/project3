@@ -2,6 +2,7 @@ package com.mall.order.dal.entitys;
 
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 
@@ -81,7 +82,6 @@ public class Order {
      */
 
     @Column(name = "create_time")
-
     private Date createTime;
 
 
@@ -93,7 +93,6 @@ public class Order {
      */
 
     @Column(name = "update_time")
-
     private Date updateTime;
 
 

@@ -1,6 +1,7 @@
 package com.mall.commons.result;
 
 
+
 public class ResponseData<T> {
 
     private boolean success;

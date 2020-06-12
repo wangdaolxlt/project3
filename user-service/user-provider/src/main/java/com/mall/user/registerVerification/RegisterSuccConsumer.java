@@ -31,9 +31,9 @@ public class RegisterSuccConsumer {
 
     private DefaultMQPushConsumer mqConsumer;
 
-    @Value("${mq.nameserver.addr}")
+    // @Value("${mq.nameserver.addr}")
     private String addr;
-    @Value("${mq.topicname}")
+    // @Value("${mq.topicname}")
     private String topicName;
 
 //    @Autowired
@@ -47,38 +47,38 @@ public class RegisterSuccConsumer {
  * 初始化mqConsumer
  * @throws MQClientException
  */
-    @PostConstruct
-    public void init() throws MQClientException {
-        log.info("mqConsumer ->初始化...,topic:{},addre:{} ",topicName,addr);
-        mqConsumer = new DefaultMQPushConsumer("register_succ_consumer_group");
-        mqConsumer.setNamesrvAddr(addr);
-        mqConsumer.subscribe(topicName, "*");
+    // @PostConstruct
+    // public void init() throws MQClientException {
+    //     log.info("mqConsumer ->初始化...,topic:{},addre:{} ",topicName,addr);
+    //     mqConsumer = new DefaultMQPushConsumer("register_succ_consumer_group");
+    //     mqConsumer.setNamesrvAddr(addr);
+    //     mqConsumer.subscribe(topicName, "*");
+    //
+    //
+    //     mqConsumer.registerMessageListener(new MessageListenerConcurrently() {
+    //         @Override
+    //         public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
+    //             MessageExt message = msgs.get(0);
+    //             byte[] body = message.getBody();
+    //             Map map = JSON.parseObject(body.toString(), Map.class);
+    //             log.info("开始执行注册邮件发送成功消息......map:{}", JSON.toJSONString(map));
+    //             try {
+    //                 sendMail(map);
+    //             } catch (Exception e) {
+    //                 e.printStackTrace();
+    //                 log.info("发送注册成功消息失败，map:{}",JSON.toJSONString(map));
+    //                 return ConsumeConcurrentlyStatus.RECONSUME_LATER;
+    //             }
+    //             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+    //         }
+    //     });
+    //
+    //     mqConsumer.start();
+    // }
 
 
-        mqConsumer.registerMessageListener(new MessageListenerConcurrently() {
-            @Override
-            public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> msgs, ConsumeConcurrentlyContext context) {
-                MessageExt message = msgs.get(0);
-                byte[] body = message.getBody();
-                Map map = JSON.parseObject(body.toString(), Map.class);
-                log.info("开始执行注册邮件发送成功消息......map:{}", JSON.toJSONString(map));
-                try {
-                    sendMail(map);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    log.info("发送注册成功消息失败，map:{}",JSON.toJSONString(map));
-                    return ConsumeConcurrentlyStatus.RECONSUME_LATER;
-                }
-                return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-            }
-        });
 
-        mqConsumer.start();
-    }
-
-
-
-    public void sendMail(Map userVerifyMap) throws Exception {
+    // public void sendMail(Map userVerifyMap) throws Exception {
 //            MailData mailData = new MailData();
 //            mailData.setToAddresss(Arrays.asList((String)userVerifyMap.get("email")));
 //            mailData.setSubject(emailConfig.getSubject());
@@ -88,6 +88,6 @@ public class RegisterSuccConsumer {
 //            viewObj.put("title",emailConfig.getSubject());
 //            mailData.setDataMap(viewObj);
 //            defaultEmailSender.sendHtmlMailUseTemplate(mailData);
-    }
+//     }
 
 }

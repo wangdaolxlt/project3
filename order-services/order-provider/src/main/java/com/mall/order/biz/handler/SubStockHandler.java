@@ -1,6 +1,7 @@
 package com.mall.order.biz.handler;
 
 import com.alibaba.fastjson.JSON;
+import com.mall.commons.tool.exception.BaseBusinessException;
 import com.mall.commons.tool.exception.BizException;
 import com.mall.order.biz.context.CreateOrderContext;
 import com.mall.order.biz.context.TransHandlerContext;
@@ -38,8 +39,47 @@ public class SubStockHandler extends AbstractTransHandler {
 	@Override
 	@Transactional
 	public boolean handle(TransHandlerContext context) {
+		CreateOrderContext createOrderContext = (CreateOrderContext) context;
 
+		List<CartProductDto> dtoList = createOrderContext.getCartProductDtoList();
+		List<Long> productIds = createOrderContext.getBuyProductIds();
+		if(CollectionUtils.isEmpty(productIds)){
+			productIds = dtoList.stream().map(u -> u.getProductId()).collect(Collectors.toList());
+		}
+		productIds.sort(Long :: compareTo);
 
-        return true;
+		//锁定库存
+		List<Stock> stockList = stockMapper.findStocksForUpdate(productIds);
+
+		if(CollectionUtils.isEmpty(stockList)){
+			throw new BizException("库存未初始化");
+		}
+
+		if(stockList.size() != productIds.size()){
+			throw new BizException("部分商品库存未初始化");
+		}
+
+		//扣减库存
+		for (CartProductDto cartProductDto : dtoList) {
+			Long productId = cartProductDto.getProductId();
+			Long productNum = cartProductDto.getProductNum();
+
+			//不能超过库存数量
+			Stock productStock = stockMapper.selectStock(productId);
+			if(productNum > productStock.getStockCount()){
+				throw new BizException( cartProductDto.getProductName() + "库存不足");
+			}
+			//不能超过限购数量
+			if(productNum > productStock.getRestrictCount()){
+				throw new BizException( cartProductDto.getProductName() + "超出限购数量");
+			}
+
+			Stock stock = new Stock();
+			stock.setItemId(productId);
+			stock.setLockCount(productNum.intValue());
+			stock.setStockCount(-productNum);
+			stockMapper.updateStock(stock);
+		}
+		return true;
 	}
 }

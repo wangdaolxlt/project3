@@ -11,6 +11,7 @@ import com.mall.order.dal.persistence.OrderShippingMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -24,6 +25,8 @@ import java.util.Date;
 @Component
 public class LogisticalHandler extends AbstractTransHandler {
 
+    @Autowired
+    private OrderShippingMapper orderShippingMapper;
 
     @Override
     public boolean isAsync() {
@@ -31,9 +34,22 @@ public class LogisticalHandler extends AbstractTransHandler {
     }
 
     @Override
+    @Transactional
     public boolean handle(TransHandlerContext context) {
+        CreateOrderContext createOrderContext = (CreateOrderContext) context;
 
+        OrderShipping orderShipping = new OrderShipping();
+        orderShipping.setOrderId(createOrderContext.getOrderId());
+        orderShipping.setReceiverName(createOrderContext.getUserName());
+        orderShipping.setReceiverAddress(createOrderContext.getStreetName());
+        orderShipping.setReceiverMobile(createOrderContext.getTel());
+        orderShipping.setCreated(new Date());
+        orderShipping.setUpdated(new Date());
 
+        int insert = orderShippingMapper.insert(orderShipping);
+        if(insert < 1){
+            throw new BizException(OrderRetCode.SHIPPING_DB_SAVED_FAILED.getCode(), OrderRetCode.SHIPPING_DB_SAVED_FAILED.getMessage());
+        }
         return true;
     }
 }

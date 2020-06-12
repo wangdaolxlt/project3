@@ -20,6 +20,6 @@ public class UserLoginResponse extends AbstractResponse {
     private String description;
     private Integer points;
     private Long balance;
-    private int state;
+    private Integer state;
     private String token;
 }
