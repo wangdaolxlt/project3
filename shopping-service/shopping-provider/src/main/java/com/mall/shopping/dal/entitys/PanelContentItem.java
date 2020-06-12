@@ -14,13 +14,13 @@ import java.util.Date;
  * create-date: 2019/7/23-18:03
  */
 @Data
-
 @Table(name = "tb_panel_content_item")
 public class PanelContentItem implements Serializable {
 
     private static final long serialVersionUID = 2917508435515179027L;
     @Id
     @KeySql(useGeneratedKeys = true)
+
 
     private Integer id;
 
