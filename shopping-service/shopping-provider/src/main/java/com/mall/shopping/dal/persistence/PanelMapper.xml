@@ -20,5 +20,6 @@
   <select id="selectPanelContentById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select a.*,b.product_id
 from tb_panel a inner join tb_panel_content b on a.id=b.panel_id where a.id=#{panelId} and status=1
+limit 0,1
   </select>
 </mapper>

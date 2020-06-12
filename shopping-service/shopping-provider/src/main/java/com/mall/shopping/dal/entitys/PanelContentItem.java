@@ -5,6 +5,7 @@ import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -14,8 +15,9 @@ import java.util.Date;
  */
 @Data
 @Table(name = "tb_panel_content_item")
-public class PanelContentItem {
+public class PanelContentItem implements Serializable {
 
+    private static final long serialVersionUID = 2917508435515179027L;
     @Id
     @KeySql(useGeneratedKeys = true)
     private Integer id;

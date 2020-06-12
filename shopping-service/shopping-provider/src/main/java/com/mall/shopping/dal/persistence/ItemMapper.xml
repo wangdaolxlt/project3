@@ -28,4 +28,7 @@
     </if>
     ORDER BY ${orderCol} ${orderDir}
   </select>
+    <select id="selectAllNum" resultType="java.lang.Long">
+        select count(*) from tb_item;
+    </select>
 </mapper>

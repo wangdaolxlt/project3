@@ -40,4 +40,11 @@
         left join tb_item f on t.product_id=f.id where t.panel_id=#{panelId}
         order by t.sort_order
   </select>
+    <select id="selectAllItems" resultMap="BaseResultMapWithItem">
+        select t.*,f.title,f.price,f.sell_point from tb_panel_content t
+        left join tb_item f on t.product_id=f.id
+    </select>
+    <select id="selectAllItemsNum" resultType="java.lang.Long">
+        select count(*) from tb_panel_content
+    </select>
 </mapper>

@@ -1,6 +1,8 @@
 package com.mall.shopping.converter;
 
 import com.mall.shopping.dal.entitys.Item;
+import com.mall.shopping.dal.entitys.PanelContentItem;
+import com.mall.shopping.dto.PanelContentItemDto;
 import com.mall.shopping.dto.ProductDetailDto;
 import com.mall.shopping.dto.ProductDto;
 import org.mapstruct.Mapper;
@@ -23,7 +25,12 @@ public interface ProductConverter {
             @Mapping(source = "sellPoint",target = "subTitle"),
             @Mapping(source = "imageBig",target = "picUrl")
     })
+
+
+
     ProductDto item2Dto(Item item);
 
     List<ProductDto> items2Dto(List<Item> items);
+
+    List<ProductDto> items2Dto2(List<PanelContentItemDto> items);
 }

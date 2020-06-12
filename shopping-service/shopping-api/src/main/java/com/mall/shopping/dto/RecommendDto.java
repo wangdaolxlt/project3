@@ -5,6 +5,7 @@ package com.mall.shopping.dto;/**
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  *  ciggar
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Data
 public class RecommendDto implements Serializable{
 
+    private static final long serialVersionUID = 6015856530008472448L;
     private Integer id;
 
     private String name;
@@ -25,7 +27,8 @@ public class RecommendDto implements Serializable{
 
     private String remark;
 
+    private Integer status;
 
-
+    private Integer limitNum;
 
 }
