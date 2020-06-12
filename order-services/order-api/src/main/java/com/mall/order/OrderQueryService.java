@@ -9,5 +9,8 @@ import com.mall.order.dto.*;
 public interface OrderQueryService {
 
 
+    OrderListResponse orderList(OrderListRequest request);
+
+    OrderDetailRespVo orderDetail(OrderDetailRequest request);
 
 }

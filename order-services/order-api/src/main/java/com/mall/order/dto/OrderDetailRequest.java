@@ -15,11 +15,11 @@ import org.apache.commons.lang3.StringUtils;
  */
 @Data
 public class OrderDetailRequest extends AbstractRequest{
-    private String orderId;
+    private Long orderId;
 
     @Override
     public void requestCheck() {
-        if(StringUtils.isBlank(orderId)){
+        if(StringUtils.isBlank(orderId.toString())){
             throw new ValidateException(OrderRetCode.REQUISITE_PARAMETER_NOT_EXIST.getCode(),OrderRetCode.REQUISITE_PARAMETER_NOT_EXIST.getMessage());
         }
     }

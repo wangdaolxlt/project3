@@ -5,6 +5,7 @@ import com.mall.order.dal.entitys.OrderItem;
 import com.mall.order.dal.entitys.OrderShipping;
 import com.mall.order.dto.*;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 import java.util.List;
@@ -15,6 +16,13 @@ import java.util.List;
  */
 @Mapper(componentModel = "spring")
 public interface OrderConverter {
+
+    @Mappings({
+            @Mapping(source = "buyerNick",target = "userName"),
+            @Mapping(source = "userId",target = "userId"),
+            @Mapping(source = "payment",target = "orderTotal"),
+    })
+    OrderDetailRespVo order2response(Order order);
 
     @Mappings({})
     OrderDetailResponse order2res(Order order);

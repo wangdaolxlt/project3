@@ -17,5 +17,7 @@ public interface OrderCoreService {
     CreateOrderResponse createOrder(CreateOrderRequest request);
 
 
+    CancelOrderResponse cancelOrder(CancelOrderRequest request);
 
+    DeleteOrderResponse deleteOrder(DeleteOrderRequest request);
 }

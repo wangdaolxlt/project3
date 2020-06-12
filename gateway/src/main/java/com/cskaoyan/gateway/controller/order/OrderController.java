@@ -7,9 +7,7 @@ import com.mall.commons.result.ResponseUtil;
 import com.mall.order.OrderCoreService;
 import com.mall.order.OrderQueryService;
 import com.mall.order.constant.OrderRetCode;
-import com.mall.order.dto.CreateOrderRequest;
-import com.mall.order.dto.CreateOrderResponse;
-import com.mall.order.dto.OrderListRequest;
+import com.mall.order.dto.*;
 import com.mall.user.intercepter.TokenIntercepter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
@@ -37,6 +35,12 @@ public class OrderController {
     private OrderQueryService orderQueryService;
 
 
+    /**
+     * 创建订单
+     * @param request
+     * @param servletRequest
+     * @return
+     */
     @PostMapping("/order" )
     public ResponseData order(@RequestBody CreateOrderRequest request, HttpServletRequest servletRequest){
         String userInfo = (String) servletRequest.getAttribute(TokenIntercepter.USER_INFO_KEY);
@@ -53,6 +57,12 @@ public class OrderController {
         return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }
 
+    /**
+     * 当前用户所有订单
+     * @param request
+     * @param servletRequest
+     * @return
+     */
     @GetMapping("/order")
     public ResponseData queryOrder(OrderListRequest request, HttpServletRequest servletRequest){
         String userInfo = (String) servletRequest.getAttribute(TokenIntercepter.USER_INFO_KEY);
@@ -60,7 +70,60 @@ public class OrderController {
         long uid = Long.parseLong(object.get("uid").toString());
         request.setUserId(uid);
 
-        return new ResponseUtil<>().setErrorMsg("");
+        OrderListResponse response = orderQueryService.orderList(request);
+
+        return new ResponseUtil<>().setData(response);
     }
 
+    /**
+     * 查看订单详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/order/{id}")
+    public ResponseData orderDetail(@PathVariable("id") Long id) {
+        OrderDetailRequest request = new OrderDetailRequest();
+        request.setOrderId(id);
+        request.requestCheck();
+
+        OrderDetailRespVo response = orderQueryService.orderDetail(request);
+        return new ResponseUtil<>().setData(response);
+    }
+
+    /**
+     * 取消订单
+     * @param id
+     * @return
+     */
+    @PutMapping("/order/{id}")
+    public ResponseData cancelOrder(@PathVariable("id") String id){
+        CancelOrderRequest request = new CancelOrderRequest();
+        request.setOrderId(id);
+        request.requestCheck();
+
+        CancelOrderResponse response = orderCoreService.cancelOrder(request);
+        if(response.getCode().equals(OrderRetCode.SUCCESS.getCode())){
+            return new ResponseUtil<>().setData("成功");
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
+
+
+    /**
+     * 删除订单
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/order/{id}")
+    public ResponseData deleteOrder(@PathVariable("id") String id){
+        DeleteOrderRequest request = new DeleteOrderRequest();
+        request.setOrderId(id);
+        request.requestCheck();
+
+        DeleteOrderResponse response = orderCoreService.deleteOrder(request);
+        if(response.getCode().equals(OrderRetCode.SUCCESS.getCode())){
+            return new ResponseUtil<>().setData("成功");
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
+    }
 }
