@@ -92,8 +92,10 @@ public class HomeServiceImpl implements IHomeService {
         }
         if(CollectionUtils.isEmpty(set)){
             homePageResponse.setCode(ShoppingRetCode.DB_EXCEPTION.getCode());
-            homePageResponse.setMsg(ShoppingRetCode.DB_EXCEPTION.getMessage());;
+            homePageResponse.setMsg(ShoppingRetCode.DB_EXCEPTION.getMessage());
         }
+        homePageResponse.setCode(ShoppingRetCode.SUCCESS.getCode());
+        homePageResponse.setMsg(ShoppingRetCode.SUCCESS.getMessage());
         homePageResponse.setPanelContentItemDtos(set);
         return  homePageResponse;
     }
