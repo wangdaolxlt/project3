@@ -64,6 +64,9 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     ProductDetailConverter productDetailConverter;
 
+    @Autowired
+    private ContentConverter contentConverter;
+
 
     /**
      * 获得所有条目
@@ -90,10 +93,11 @@ public class ProductServiceImpl implements IProductService {
 
     @Override
     public RecommendResponse getRecommendGoods() {
-        List<PanelContentItemDto> panelContentItems = panelContentMapper.selectPanelContentAndProductWithPanelId(6);
+        List<PanelContentItem> panelContentItems = panelContentMapper.selectPanelContentAndProductWithPanelId(6);
+        List<PanelContentItemDto> panelContentItemDtos = contentConverter.panelContentItem2Dto(panelContentItems);
         List<Panel> panels = panelMapper.selectPanelContentById(6);
         List<PanelDto> dtoList = recommendConverter.panels2Dto(panels);
-        dtoList.get(0).setPanelContentItems(panelContentItems);
+        dtoList.get(0).setPanelContentItems(panelContentItemDtos);
         RecommendResponse response = new RecommendResponse();
         response.setPanelContentItemDtos(dtoList);
         return response;

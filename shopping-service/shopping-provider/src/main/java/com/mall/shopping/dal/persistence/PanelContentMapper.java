@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Param;
 
 public interface PanelContentMapper extends TkMapper<PanelContent> {
 
-    List<PanelContentItemDto> selectPanelContentAndProductWithPanelId(@Param("panelId")Integer panelId);
+    List<PanelContentItem> selectPanelContentAndProductWithPanelId(@Param("panelId")Integer panelId);
 
     List<PanelContentItemDto> selectAllItems();
 
