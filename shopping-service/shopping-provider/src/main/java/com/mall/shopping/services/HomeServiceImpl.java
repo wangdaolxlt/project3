@@ -22,19 +22,19 @@ import java.util.*;
 public class HomeServiceImpl implements IHomeService {
 
     @Autowired
-    PanelMapper panelMapper;
+    private PanelMapper panelMapper;
 
     @Autowired
-    PanelContentMapper panelContentMapper;
+    private PanelContentMapper panelContentMapper;
 
     @Autowired
-    ItemMapper itemMapper;
+    private ItemMapper itemMapper;
 
     @Autowired
-    ContentConverter contentConverter;
+    private ContentConverter contentConverter;
 
     @Autowired
-    ProductConverter productConverter;
+    private ProductConverter productConverter;
 
     //panel-->panel_content-->item
     //TODO 活动板块中productName为null,会报空指针异常，因此要先做判断
@@ -47,45 +47,20 @@ public class HomeServiceImpl implements IHomeService {
         List<Panel> panels = panelMapper.selectByExample(example);
         for (Panel panel : panels) {
             PanelDto panelDto = contentConverter.panen2Dto(panel);
-//            panelDto.setPanelContentItems();
-            Example example1 = new Example(PanelContent.class);
-            example1.createCriteria().andEqualTo("panelId",panel.getId());
-            List<PanelContent> panelContents = panelContentMapper.selectByExample(example1);
-//            List<PanelContentDto> panelContentDtos = contentConverter.panelContents2Dto(panelContents);//不用转换
-            //先获取PanelContentItem
-            List<PanelContentItemDto> panelContentItemDtos = new ArrayList<>();
-            for (PanelContent panelContent : panelContents) {
-                PanelContentItemDto panelContentItemDto = new PanelContentItemDto();
-//                Example example2 = new Example(Item.class);
-//                example2.createCriteria().andEqualTo("id",panelContentDto.getProductId());
-//                List<Item> items = itemMapper.selectByExample(example2);
-                //TODO 注意连接item表的时候，如果productId=null,item返回null
+            List<PanelContentItem> panelContentItems = panelContentMapper.selectPanelContentAndProductWithPanelId(panel.getId());
+            List<PanelContentItemDto> panelContentItemDtos = contentConverter.panelContentItem2Dto(panelContentItems);
+            for (PanelContentItemDto panelContentItemDto : panelContentItemDtos) {
                 ProductDto productDto = null;
-                if(panelContent.getProductId() != null){
-                    Item item = itemMapper.selectByPrimaryKey(panelContent.getProductId());
+                //TODO 注意连接item表的时候，如果productId=null,item返回null
+                if(panelContentItemDto.getProductId() != null){
+                    Item item = itemMapper.selectByPrimaryKey(panelContentItemDto.getProductId());
                     //productName  salePrice subTitle 只要这三个字段
                     productDto = productConverter.item2Dto(item);
                 }
                 productDto= new ProductDto(null,null,null,null,null);
-//                System.out.println("**************************************");
-//                System.out.println(productDto);
                 panelContentItemDto.setProductName(productDto.getProductName());
                 panelContentItemDto.setSalePrice(productDto.getSalePrice());
                 panelContentItemDto.setSubTitle(productDto.getSubTitle());
-                panelContentItemDto.setId(panelContent.getId());
-                panelContentItemDto.setPanelId(panelContent.getPanelId());
-                panelContentItemDto.setType(panelContent.getType());
-                panelContentItemDto.setProductId(panelContent.getProductId());
-                panelContentItemDto.setSortOrder(panelContent.getSortOrder());
-                panelContentItemDto.setFullUrl(panelContent.getFullUrl());
-                panelContentItemDto.setPicUrl(panelContent.getPicUrl());
-                panelContentItemDto.setPicUrl2(panelContent.getPicUrl2());
-                panelContentItemDto.setPicUrl3(panelContent.getPicUrl3());
-                panelContentItemDto.setCreated(panelContent.getCreated());
-                panelContentItemDto.setUpdated(panelContent.getUpdated());
-                panelContentItemDtos.add(panelContentItemDto);
-//                System.out.println(panelContentItemDto);
-//                System.out.println("**************************************");
             }
             panelDto.setPanelContentItems(panelContentItemDtos);
             set.add(panelDto);
