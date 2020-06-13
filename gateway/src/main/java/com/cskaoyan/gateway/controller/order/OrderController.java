@@ -81,7 +81,7 @@ public class OrderController {
      * @return
      */
     @GetMapping("/order/{id}")
-    public ResponseData orderDetail(@PathVariable("id") Long id) {
+    public ResponseData orderDetail(@PathVariable("id") String id) {
         OrderDetailRequest request = new OrderDetailRequest();
         request.setOrderId(id);
         request.requestCheck();

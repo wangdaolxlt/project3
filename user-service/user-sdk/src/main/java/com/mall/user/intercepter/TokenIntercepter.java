@@ -32,6 +32,11 @@ public class TokenIntercepter extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin")); // 设置允许所有跨域访问（支持带Cookie）
+        response.setHeader("Access-Control-Allow-Credentials", "true"); // 配合前端
+        response.setHeader("Access-Control-Allow-Methods", "POST,GET,PUT,OPTIONS,DELETE");
+        response.setHeader("Access-Control-Max-Age", "3600");
+        response.setHeader("Access-Control-Allow-Headers", "Origin,X-Requested-With,Content-Type,Accept,Authorization,token");
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
