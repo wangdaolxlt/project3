@@ -3,11 +3,11 @@ package com.cskaoyan.gateway.controller.shopping;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mall.commons.result.ResponseData;
+import com.mall.commons.result.ResponseUtil;
 import com.mall.shopping.ICartService;
-import com.mall.shopping.dto.AddCartRequest;
-import com.mall.shopping.dto.AddCartResponse;
-import com.mall.shopping.dto.CartListByIdRequest;
-import com.mall.shopping.dto.CartListByIdResponse;
+import com.mall.shopping.constants.ShoppingRetCode;
+import com.mall.shopping.dto.*;
+import com.mall.user.constants.SysRetCodeConstants;
 import com.mall.user.intercepter.TokenIntercepter;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.*;
@@ -66,5 +66,69 @@ public class CartsController {
         data.setSuccess(true);
         data.setTimestamp(System.currentTimeMillis());
         return data;
+    }
+    /**
+     * 更新购物车中的商品
+     * @param requestBody
+     * @return
+     */
+    @PutMapping("/carts")
+    public ResponseData putCarts(@RequestBody UpdateCartRequestBody requestBody){
+
+        Long userId = requestBody.getUserId();
+        Long productId = requestBody.getProductId();
+        Integer productNum = requestBody.getProductNum();
+        String checked = requestBody.getChecked();
+
+        UpdateCartNumRequest request = new UpdateCartNumRequest();
+        request.setChecked(checked);
+        request.setItemId(productId);
+        request.setNum(productNum);
+        request.setUserId(userId);
+        // 更新商品数量和选中的状态
+        UpdateCartNumResponse updateCartNumResponse = cartService.updateCartNum(request);
+        if (updateCartNumResponse.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
+            return new ResponseUtil<>().setData(ShoppingRetCode.SUCCESS.getMessage());
+        }
+
+        return new ResponseUtil<>().setErrorMsg(updateCartNumResponse.getMsg());
+    }
+
+    /**
+     * 删除购物车中的商品
+     * @param uid
+     * @param pid
+     * @return
+     */
+    @DeleteMapping("/carts/{uid}/{pid}")
+    public ResponseData dropCarts(@PathVariable("uid") Long uid, @PathVariable("pid") Long pid) {
+
+        DeleteCartItemRequest request = new DeleteCartItemRequest();
+        request.setItemId(pid);
+        request.setUserId(uid);
+
+        DeleteCartItemResponse deleteCartItemResponse = cartService.deleteCartItem(request);
+
+        if (deleteCartItemResponse.getCode().equals(ShoppingRetCode.SUCCESS.getCode())) {
+            return new ResponseUtil<>().setData(ShoppingRetCode.SUCCESS.getMessage());
+        }
+
+        return new ResponseUtil<>().setErrorMsg(deleteCartItemResponse.getMsg());
+    }
+
+    /**
+     * 删除购物车中选中的商品
+     * @param uid
+     * @return
+     */
+    @DeleteMapping("/items/{id}")
+    public ResponseData deleteCheckedItem(@PathVariable("id") Long uid){
+        DeleteCheckedItemRequest request = new DeleteCheckedItemRequest();
+        request.setUserId(uid);
+        DeleteCheckedItemResponse response = cartService.deleteCheckedItem(request);
+        if(response.getCode().equals(ShoppingRetCode.SUCCESS.getCode())){
+            return new ResponseUtil<>().setData(ShoppingRetCode.SUCCESS.getMessage());
+        }
+        return new ResponseUtil<>().setErrorMsg(response.getMsg());
     }
 }

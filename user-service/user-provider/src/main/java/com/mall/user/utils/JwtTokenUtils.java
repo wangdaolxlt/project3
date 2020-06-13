@@ -46,9 +46,10 @@ public class JwtTokenUtils {
     public static void main(String[] args) {
 //        String token = JwtTokenUtils.builder().msg("cskaoyan").build().creatJwtToken();
 //        System.out.println("产生的token:" + token);
-
-        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjaWdnYXIiLCJleHAiOjE1ODc5ODE1MDEsInVzZXIiOiIwQTgzNDAxMjA2QjA5RDY3NTJCMUJDRDk5QkIwQTMwMiJ9.6_izud3xe7Fypthm5i-Z58aylIqIGU_Pq0uxzagFsrw";
-
+                      //eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjaWdnYXIiLCJleHAiOjE1OTE5MjQ4MzEsInVzZXIiOiIwQTgzNDAxMjA2QjA5RDY3NTJCMUJDRDk5QkIwQTMwMiJ9.YqcA8SSpqobbua40Yioy4YNeU2OKDiMTANfa1NBp7ZQ
+          String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjaWdnYXIiLCJleHAiOjE1OTE5MjQ4MzEsInVzZXIiOiIwQTgzNDAxMjA2QjA5RDY3NTJCMUJDRDk5QkIwQTMwMiJ9.YqcA8SSpqobbua40Yioy4YNeU2OKDiMTANfa1NBp7ZQ";
+//        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJjaWdnYXIiLCJleHAiOjE1ODc5ODE1MDEsInVzZXIiOiIwQTgzNDAxMjA2QjA5RDY3NTJCMUJDRDk5QkIwQTMwMiJ9.6_izud3xe7Fypthm5i-Z58aylIqIGU_Pq0uxzagFsrw";
+//
         String info = JwtTokenUtils.builder().token(token).build().freeJwt();
         System.out.println(info);
 
