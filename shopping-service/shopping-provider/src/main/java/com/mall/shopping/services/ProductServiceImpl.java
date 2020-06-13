@@ -74,7 +74,7 @@ public class ProductServiceImpl implements IProductService {
      * @return
      */
     @Override
-    public AllProductResponse getAllProduct(AllProductRequest request) {
+    public AllGoodsResponse getAllProduct(AllProductRequest request) {
         PageHelper.startPage(request.getPage(), request.getSize());
 //        List<PanelContentItemDto> panelContentItems = panelContentMapper.selectAllItems();
         List<Item> items = itemMapper.selectAll();
@@ -82,9 +82,9 @@ public class ProductServiceImpl implements IProductService {
         Long num = itemMapper.selectAllNum();
 
         List<ProductDto> dtoList = productConverter.items2Dto(items);
-        AllProductResponse response = new AllProductResponse();
+        AllGoodsResponse response = new AllGoodsResponse();
 
-        response.setProductDtoList(dtoList);
+        response.setData(dtoList);
         response.setTotal(num);
         return response;
     }

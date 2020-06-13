@@ -26,7 +26,7 @@ public interface IProductService {
      * @param request
      * @return
      */
-    AllProductResponse getAllProduct(AllProductRequest request);
+    AllGoodsResponse getAllProduct(AllProductRequest request);
 
     /**
      * 获取推荐的商品板块

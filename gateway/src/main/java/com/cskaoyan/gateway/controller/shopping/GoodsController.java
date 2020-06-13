@@ -2,6 +2,7 @@ package com.cskaoyan.gateway.controller.shopping;
 
 import com.mall.commons.result.ResponseData;
 import com.mall.shopping.IProductService;
+import com.mall.shopping.dto.AllGoodsResponse;
 import com.mall.shopping.dto.AllProductRequest;
 import com.mall.shopping.dto.AllProductResponse;
 import com.mall.user.annotation.Anoymous;
@@ -57,12 +58,12 @@ public class GoodsController {
         allProductRequest.setPriceLte(priceLte);
         allProductRequest.setCid(cid);
 
-        AllProductResponse allProduct = productService.getAllProduct(allProductRequest);
+        AllGoodsResponse allGoods = productService.getAllProduct(allProductRequest);
 
         ResponseData<Object> data = new ResponseData<>();
         data.setCode(200);
         data.setMessage("success");
-        data.setResult(allProduct);
+        data.setResult(allGoods);
         data.setSuccess(true);
         data.setTimestamp(System.currentTimeMillis());
         return data;
