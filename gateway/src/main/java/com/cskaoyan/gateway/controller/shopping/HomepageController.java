@@ -72,12 +72,7 @@ public class HomepageController {
     @Anoymous
     @ApiOperation("导航栏显示")
     public ResponseData navigation(){
-//        ResponseData<List<PanelContentDto>> responseData = new ResponseData<>();
         NavListResponse navListResponse = contentService.queryNavList();
-//        responseData.setCode(200);
-//        responseData.setMessage("success");
-//        responseData.setSuccess(true);
-//        responseData.setResult(navListResponse.getPannelContentDtos());
         //成功
         if(navListResponse.getCode().equals(ShoppingRetCode.SUCCESS.getCode())) {
             return new ResponseUtil<>().setData(navListResponse.getPannelContentDtos());
@@ -110,7 +105,7 @@ public class HomepageController {
      @GetMapping("/product/{id}")
      @ApiOperation("查看商品详情")
      @Anoymous
-     public ResponseData productDetail(@PathVariable(value = "id")Integer id){
+     public ResponseData productDetail(@PathVariable(value = "id")Long id){
          ProductDetailResponse productDetail = productService.getProductDetails(id);
          if(productDetail.getCode().equals(ShoppingRetCode.SUCCESS.getCode())) {
              return new ResponseUtil<>().setData(productDetail.getProductDetailDto());
