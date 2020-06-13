@@ -35,6 +35,8 @@ public class ProductCateServiceImpl implements IProductCateService {
         AllProductCateResponse allProductCateResponse = new AllProductCateResponse();
         Example example = new Example(Item.class);
         example.setOrderByClause("sort_order");//升序排列
+        //只显示启用的
+        example.createCriteria().andEqualTo("status",1);
         List<ItemCat> itemCats = itemCatMapper.selectByExample(example);
         List<ProductCateDto> productCateDtos = productCateConverter.items2Dto(itemCats);
         if(CollectionUtils.isEmpty(productCateDtos)) {

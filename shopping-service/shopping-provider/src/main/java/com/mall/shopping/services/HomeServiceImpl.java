@@ -43,6 +43,7 @@ public class HomeServiceImpl implements IHomeService {
         HomePageResponse homePageResponse = new HomePageResponse();
         Set<PanelDto> set = new HashSet<>();
         Example example = new Example(Panel.class);
+        example.setOrderByClause("sort_order");
         example.createCriteria().andEqualTo("position",0);
         List<Panel> panels = panelMapper.selectByExample(example);
         for (Panel panel : panels) {

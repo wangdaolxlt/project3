@@ -83,6 +83,7 @@ public class IUserServiceImpl implements IUserService {
         Member memberRecord = Member.builder()
                 .username(registerRequest.getUserName())
                 .password(DigestUtils.md5DigestAsHex(registerRequest.getUserPwd().getBytes()))
+                .email(registerRequest.getEmail())
                 .created(new Date())
                 .updated(new Date())
                 .isVerified("N")
