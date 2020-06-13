@@ -28,7 +28,7 @@ public class UserController {
 
     @Reference(timeout = 3000, check = false)
     IKaptchaService iKaptchaService;
-    @Reference(timeout = 3000, check = false)
+    @Reference(timeout = 5000, check = false, retries = 0)
     IUserService iUserService;
 
     /**

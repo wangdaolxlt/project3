@@ -30,13 +30,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @Author: Lucas_Alison
  * Date: 2020/6/11 13:29
  */
 @Component
-@Service
+@Service(retries = 0)
 @Slf4j
 @ConfigurationProperties(prefix = "verify.mail")
 @Data
@@ -117,11 +119,19 @@ public class IUserServiceImpl implements IUserService {
         // 3. 发送用户激活邮件
         // TODO: 2020/6/11  发送用户激活邮件, 消息中间件MQ优化
         try {
-            sendEmail(userVerifyRecord.getUuid(), registerRequest);
+            ExecutorService executorService = Executors.newSingleThreadExecutor();
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    sendEmail(userVerifyRecord.getUuid(), registerRequest);
+                }
+            });
         } catch (Exception e) {
             log.info("激活邮件发送失败");
             e.printStackTrace();
         }
+        // 通过异步线程来实现 消息队列
+
 
         // 用户插入成功
         registerResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
