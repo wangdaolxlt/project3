@@ -5,6 +5,7 @@ import com.mall.order.biz.context.CreateOrderContext;
 import com.mall.order.biz.context.TransHandlerContext;
 import com.mall.order.constant.OrderRetCode;
 import com.mall.order.dal.persistence.OrderMapper;
+import com.mall.user.IAddressService;
 import com.mall.user.IMemberService;
 import com.mall.user.constants.SysRetCodeConstants;
 import com.mall.user.dto.QueryMemberRequest;
@@ -25,7 +26,8 @@ public class ValidateHandler extends AbstractTransHandler {
 
     @Reference(check = false)
     private IMemberService memberService;
-
+    @Reference
+    private IAddressService iAddressService;
     /**
      * 验证用户合法性
      * @return
@@ -38,7 +40,7 @@ public class ValidateHandler extends AbstractTransHandler {
 
     @Override
     public boolean handle(TransHandlerContext context) {
-        CreateOrderContext createOrderContext = (CreateOrderContext) context;
+/*        CreateOrderContext createOrderContext = (CreateOrderContext) context;
         QueryMemberRequest request = new QueryMemberRequest();
         request.setUserId(createOrderContext.getUserId());
 
@@ -50,7 +52,7 @@ public class ValidateHandler extends AbstractTransHandler {
             }
 
             createOrderContext.setBuyerNickName(username);
-        }
+        }*/
         return true;
     }
 }

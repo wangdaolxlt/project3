@@ -5,15 +5,15 @@ import com.mall.commons.tool.exception.BizException;
 import com.mall.order.biz.context.CreateOrderContext;
 import com.mall.order.biz.context.TransHandlerContext;
 import com.mall.order.constant.OrderRetCode;
+import com.mall.order.dto.CartProductDto;
 import com.mall.shopping.ICartService;
 import com.mall.shopping.constants.ShoppingRetCode;
-import com.mall.shopping.dto.ClearCartItemRequest;
-import com.mall.shopping.dto.ClearCartItemResponse;
-import com.mall.shopping.dto.DeleteCheckedItemRequest;
-import com.mall.shopping.dto.DeleteCheckedItemResposne;
+import com.mall.shopping.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  *  ciggar
@@ -37,13 +37,24 @@ public class ClearCartItemHandler extends AbstractTransHandler {
     public boolean handle(TransHandlerContext context) {
         CreateOrderContext createOrderContext = (CreateOrderContext) context;
         Long uid = createOrderContext.getUserId();
-
-        DeleteCheckedItemRequest request = new DeleteCheckedItemRequest();
+        List<CartProductDto> cartProductDtoList = createOrderContext.getCartProductDtoList();
+        for (CartProductDto cartProductDto : cartProductDtoList) {
+            Long pid = cartProductDto.getProductId();
+            DeleteCartItemRequest request = new DeleteCartItemRequest();
+            request.setItemId(pid);
+            request.setUserId(uid);
+            DeleteCartItemResponse response = cartService.deleteCartItem(request);
+            if(!response.getCode().equals(ShoppingRetCode.SUCCESS.getCode())){
+                return false;
+            }
+        }
+        return true;
+/*        DeleteCheckedItemRequest request = new DeleteCheckedItemRequest();
         request.setUserId(uid);
         DeleteCheckedItemResposne response = cartService.deleteCheckedItem(request);
         if(response.getCode().equals(ShoppingRetCode.SUCCESS.getCode())){
             return true;
         }
-        return false;
+        return false;*/
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -49,26 +50,33 @@ public class CartServiceImpl implements ICartService {
     private ItemMapper itemMapper;
 
 
-
-
-
+    /**
+     * 购物车列表
+     * @param request
+     * @return
+     */
     @Override
     public CartListResponse getCartListById(CartListByIdRequest request) {
         Long userId = request.getUserId();
         String userIdS = String.valueOf(userId);
-        userIdS = "user_" + userIdS;
+        userIdS = "cart_" + userIdS;
         String data = cacheManager.checkCache(userIdS);
 
         List<CartProductDto> list = JSON.parseArray(data, CartProductDto.class);
         CartListResponse response = new CartListResponse();
         response.setResult(list);
         return response;
-}
+    }
 
+    /**
+     * 添加到购物车
+     * @param request
+     * @return
+     */
     @Override
     public AddCartResponse addToCart(AddCartRequest request) {
         String userIdS = String.valueOf(request.getUserId());
-        userIdS = "user_" + userIdS;
+        userIdS = "cart_" + userIdS;
         AddCartResponse response = new AddCartResponse();
         Gson gson = new Gson();
 //        Example example = new Example(Item.class);
@@ -76,6 +84,7 @@ public class CartServiceImpl implements ICartService {
         Item item = itemMapper.selectByPrimaryKey(request.getItemId());
         CartProductDto cartProductDto = CartItemConverter.item2Dto(item);
         cartProductDto.setProductNum(request.getNum().longValue());
+        cartProductDto.setChecked("true");
         String data = cacheManager.checkCache(userIdS);
 
 
@@ -106,6 +115,11 @@ public class CartServiceImpl implements ICartService {
         return response;
     }
 
+    /**
+     * 更新购物车商品
+     * @param request
+     * @return
+     */
     @Override
     public UpdateCartNumResponse updateCartNum(UpdateCartNumRequest request) {
 
@@ -160,6 +174,11 @@ public class CartServiceImpl implements ICartService {
 //        return null;
 //    }
 
+    /**
+     * 删除购物车
+     * @param request
+     * @return
+     */
     @Override
     @Transactional
     public DeleteCartItemResponse deleteCartItem(DeleteCartItemRequest request) {
@@ -174,16 +193,20 @@ public class CartServiceImpl implements ICartService {
             if (bucket.isExists()){
                 String str = bucket.get();
                 List<CartProductDto> cartList = JSON.parseArray(str, CartProductDto.class);
-                for (CartProductDto item : cartList) {
+/*                for (CartProductDto item : cartList) {
                     if (item.getProductId().equals(request.getItemId())){
                         cartList.remove(item);
-                        break;
+                    }
+                }*/
+                for (Iterator iterator = cartList.iterator(); iterator.hasNext();) {
+                    CartProductDto temp = (CartProductDto) iterator.next();
+                    if("true".equals(temp.getChecked())){
+                        iterator.remove();
                     }
                 }
                 bucket.set(JSON.toJSONString(cartList));
                 response.setCode(ShoppingRetCode.SUCCESS.getCode());
                 response.setMsg(ShoppingRetCode.SUCCESS.getMessage());
-
             }
         } catch (Exception e) {
             log.error("An error occurs in ICartServiceImpl.deleteCartItem :" + e);
@@ -192,6 +215,11 @@ public class CartServiceImpl implements ICartService {
         return response;
     }
 
+    /**
+     * 删除选中
+     * @param request
+     * @return
+     */
     @Override
     public DeleteCheckedItemResposne deleteCheckedItem(DeleteCheckedItemRequest request) {
 
@@ -204,10 +232,22 @@ public class CartServiceImpl implements ICartService {
             if (bucket.get() != null){
                 String cartListJson = bucket.get();
                 List<CartProductDto> cartList = JSON.parseArray(cartListJson, CartProductDto.class);
-                for (CartProductDto temp : cartList) {
+/*                for (CartProductDto temp : cartList) {
                     if(temp.getChecked().equals("true")){
                         cartList.remove(temp);
-                        break;
+                    }
+                }*/
+/*                Iterator<CartProductDto> iterator = cartList.iterator();
+                while(iterator.hasNext()){
+                    CartProductDto temp = iterator.next();
+                    if("true".equals(temp.getChecked())){
+                        iterator.remove();
+                    }
+                }*/
+                for (Iterator iterator = cartList.iterator(); iterator.hasNext();) {
+                    CartProductDto temp = (CartProductDto) iterator.next();
+                    if("true".equals(temp.getChecked())){
+                        iterator.remove();
                     }
                 }
                 bucket.set(JSON.toJSONString(cartList));

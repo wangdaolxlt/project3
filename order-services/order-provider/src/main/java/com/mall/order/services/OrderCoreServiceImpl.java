@@ -124,7 +124,7 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 			stock.setStockCount(productNum.longValue());
 			stockMapper.updateStock(stock);
 		}
-		response.setCode("000000");
+		response.setCode(OrderRetCode.SUCCESS.getCode());
 		return response;
 	}
 
@@ -143,6 +143,7 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 		 */
 		if(order.getStatus() < 4){
 			response.setMsg("订单仍在进行无法删除");
+			response.setCode(OrderRetCode.SYSTEM_ERROR.getCode());
 			return response;
 		}
 
@@ -152,7 +153,7 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 			response.setMsg(OrderRetCode.DB_EXCEPTION.getMessage());
 			return response;
 		}
-		response.setCode("000000");
+		response.setCode(OrderRetCode.SUCCESS.getCode());
 		return response;
 	}
 
