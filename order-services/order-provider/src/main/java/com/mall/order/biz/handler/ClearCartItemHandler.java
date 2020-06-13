@@ -1,12 +1,16 @@
 package com.mall.order.biz.handler;
 
+import com.mall.commons.result.ResponseUtil;
 import com.mall.commons.tool.exception.BizException;
 import com.mall.order.biz.context.CreateOrderContext;
 import com.mall.order.biz.context.TransHandlerContext;
 import com.mall.order.constant.OrderRetCode;
 import com.mall.shopping.ICartService;
+import com.mall.shopping.constants.ShoppingRetCode;
 import com.mall.shopping.dto.ClearCartItemRequest;
 import com.mall.shopping.dto.ClearCartItemResponse;
+import com.mall.shopping.dto.DeleteCheckedItemRequest;
+import com.mall.shopping.dto.DeleteCheckedItemResposne;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.stereotype.Component;
@@ -20,6 +24,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ClearCartItemHandler extends AbstractTransHandler {
 
+    @Reference(timeout = 3000,check = false)
+    ICartService cartService;
 
     //是否采用异步方式执行
     @Override
@@ -29,6 +35,15 @@ public class ClearCartItemHandler extends AbstractTransHandler {
 
     @Override
     public boolean handle(TransHandlerContext context) {
-        return true;
+        CreateOrderContext createOrderContext = (CreateOrderContext) context;
+        Long uid = createOrderContext.getUserId();
+
+        DeleteCheckedItemRequest request = new DeleteCheckedItemRequest();
+        request.setUserId(uid);
+        DeleteCheckedItemResposne response = cartService.deleteCheckedItem(request);
+        if(response.getCode().equals(ShoppingRetCode.SUCCESS.getCode())){
+            return true;
+        }
+        return false;
     }
 }
