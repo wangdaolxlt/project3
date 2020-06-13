@@ -29,6 +29,7 @@ public class ProductCateServiceImpl implements IProductCateService {
         return null;
     }
 
+    //获取所有产品categories
     @Override
     public AllProductCateResponse getAllProductCategory() {
         AllProductCateResponse allProductCateResponse = new AllProductCateResponse();
@@ -36,13 +37,13 @@ public class ProductCateServiceImpl implements IProductCateService {
         example.setOrderByClause("sort_order");//升序排列
         List<ItemCat> itemCats = itemCatMapper.selectByExample(example);
         List<ProductCateDto> productCateDtos = productCateConverter.items2Dto(itemCats);
-        allProductCateResponse.setProductCateDtoList(productCateDtos);
         if(CollectionUtils.isEmpty(productCateDtos)) {
             allProductCateResponse.setCode(ShoppingRetCode.DB_EXCEPTION.getCode());
             allProductCateResponse.setMsg(ShoppingRetCode.DB_EXCEPTION.getMessage());
         }
+        allProductCateResponse.setProductCateDtoList(productCateDtos);
         allProductCateResponse.setCode(ShoppingRetCode.SUCCESS.getCode());
-        allProductCateResponse.setCode(ShoppingRetCode.SUCCESS.getMessage());
+        allProductCateResponse.setMsg(ShoppingRetCode.SUCCESS.getMessage());
         return allProductCateResponse;
     }
 }

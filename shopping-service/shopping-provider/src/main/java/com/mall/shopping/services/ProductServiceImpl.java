@@ -67,7 +67,6 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     private ContentConverter contentConverter;
 
-
     /**
      * 获得所有条目
      *
@@ -105,7 +104,7 @@ public class ProductServiceImpl implements IProductService {
 
     //获取商品详情
     @Override
-    public ProductDetailResponse getProductDetails(Integer id) {
+    public ProductDetailResponse getProductDetails(Long id) {
         ProductDetailResponse productDetailResponse = new ProductDetailResponse();
         Example example = new Example(Item.class);
         example.createCriteria().andEqualTo("id", id);
@@ -119,6 +118,8 @@ public class ProductServiceImpl implements IProductService {
         productDetailDto.setProductImageSmall(items.get(0).getImages());
         productDetailDto.setDetail(itemDesc.getItemDesc());
         productDetailResponse.setProductDetailDto(productDetailDto);
+        productDetailResponse.setCode(ShoppingRetCode.SUCCESS.getCode());
+        productDetailResponse.setMsg(ShoppingRetCode.SUCCESS.getMessage());
         return productDetailResponse;
     }
 

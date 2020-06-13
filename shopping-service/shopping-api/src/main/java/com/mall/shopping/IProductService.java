@@ -19,7 +19,7 @@ public interface IProductService {
      * @return
      */
     //ProductDetailResponse getProductDetail(ProductDetailRequest request);
-    ProductDetailResponse getProductDetails(Integer id);
+    ProductDetailResponse getProductDetails(Long id);
 
     /**
      * 查询所有商品（分页）
