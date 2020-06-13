@@ -1,8 +1,11 @@
 package com.mall.shopping.services;
 
+import com.alibaba.druid.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.mall.commons.tool.redisconfig.RedissonAutoConfiguration;
 import com.mall.shopping.ICartService;
 import com.mall.shopping.constants.ShoppingRetCode;
@@ -46,36 +49,57 @@ public class CartServiceImpl implements ICartService {
     private ItemMapper itemMapper;
 
 
+
+
+
     @Override
-    public CartListByIdResponse getCartListById(CartListByIdRequest request) {
+    public CartListResponse getCartListById(CartListByIdRequest request) {
         Long userId = request.getUserId();
         String userIdS = String.valueOf(userId);
         String data = cacheManager.checkCache(userIdS);
-        String parse = ((String) JSON.parse(data));
 
-        List<CartProductDto> list = new ArrayList<CartProductDto>();
-        list = JSONObject.parseArray(parse, CartProductDto.class);
-
-        CartListByIdResponse response = new CartListByIdResponse();
-        response.setCartProductDtos(list);
+        List<CartProductDto> list = JSON.parseArray(data, CartProductDto.class);
+        CartListResponse response = new CartListResponse();
+        response.setResult(list);
         return response;
-    }
+}
 
     @Override
     public AddCartResponse addToCart(AddCartRequest request) {
-        String s = String.valueOf(request.getUserId());
-
+        String id = String.valueOf(request.getUserId());
+        AddCartResponse response = new AddCartResponse();
+        Gson gson = new Gson();
 //        Example example = new Example(Item.class);
 //        example.createCriteria().andEqualTo("id",request.getItemId());
         Item item = itemMapper.selectByPrimaryKey(request.getItemId());
         CartProductDto cartProductDto = CartItemConverter.item2Dto(item);
+        cartProductDto.setProductNum(request.getNum().longValue());
+        String data = cacheManager.checkCache(id);
+
+
+        if (!StringUtils.isEmpty(data)) {
+            List<CartProductDto> list = JSON.parseArray(data, CartProductDto.class);
+            for (CartProductDto productDto : list) {
+                if (productDto.getProductId().equals(cartProductDto.getProductId())) {
+                    productDto.setProductNum(productDto.getProductNum()
+                            + cartProductDto.getProductNum());
+                    String json = gson.toJson(list);
+                    cacheManager.setCache(id, json, 3000);
+                    response.setResult("成功");
+                    return response;
+                }
+            }
+            list.add(cartProductDto);
+            String json = gson.toJson(list);
+            cacheManager.setCache(id, json, 3000);
+            response.setResult("成功");
+            return response;
+
+        }
         ArrayList<CartProductDto> dtos = new ArrayList<>();
         dtos.add(cartProductDto);
-        String dtosString = dtos.toString();
-
-        cacheManager.setCache(s, dtosString, 3000);
-
-        AddCartResponse response = new AddCartResponse();
+        String json = gson.toJson(dtos);
+        cacheManager.setCache(id, json, 3000);
         response.setResult("成功");
         return response;
     }

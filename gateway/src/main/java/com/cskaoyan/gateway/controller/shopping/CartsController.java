@@ -13,6 +13,7 @@ import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * @PackgeName: com.cskaoyan.gateway.controller.shopping
@@ -43,29 +44,37 @@ public class CartsController {
 
         CartListByIdRequest idRequest = new CartListByIdRequest();
         idRequest.setUserId(uid);
-        CartListByIdResponse cartListById = cartService.getCartListById(idRequest);
+        CartListResponse cartListResponse = cartService.getCartListById(idRequest);
+        List<CartProductDto> result = cartListResponse.getResult();
 
         ResponseData<Object> data = new ResponseData<>();
         data.setCode(200);
         data.setMessage("success");
-        data.setResult(cartListById);
+        data.setResult(result);
         data.setSuccess(true);
         data.setTimestamp(System.currentTimeMillis());
         return data;
     }
 
+    /**
+     * 添加到购物车
+     * @param addCartRequestBody
+     * @return
+     */
     @PostMapping("carts")
     public ResponseData carts(@RequestBody AddCartRequestBody addCartRequestBody) {
         AddCartRequest addCartRequest = new AddCartRequest();
         addCartRequest.setItemId(addCartRequestBody.getProductId());
         addCartRequest.setNum(addCartRequestBody.getProductNum());
+        addCartRequest.setUserId(addCartRequestBody.getUserId());
 
         AddCartResponse response = cartService.addToCart(addCartRequest);
+        String result = response.getResult();
 
         ResponseData<Object> data = new ResponseData<>();
         data.setCode(200);
         data.setMessage("success");
-        data.setResult(response.getResult());
+        data.setResult(result);
         data.setSuccess(true);
         data.setTimestamp(System.currentTimeMillis());
         return data;

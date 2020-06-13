@@ -60,6 +60,7 @@ public class GoodsController {
 
         AllGoodsResponse allGoods = productService.getAllProduct(allProductRequest);
 
+
         ResponseData<Object> data = new ResponseData<>();
         data.setCode(200);
         data.setMessage("success");

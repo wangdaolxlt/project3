@@ -76,8 +76,18 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public AllGoodsResponse getAllProduct(AllProductRequest request) {
         PageHelper.startPage(request.getPage(), request.getSize());
+        String sort = request.getSort();
 //        List<PanelContentItemDto> panelContentItems = panelContentMapper.selectAllItems();
-        List<Item> items = itemMapper.selectAll();
+        Example example = new Example(Item.class);
+        if (!("".equals(sort))) {
+            if ("1".equals(sort)) {
+                example.setOrderByClause("price");
+            } else if ("-1".equals(sort)) {
+                example.setOrderByClause("price" + " desc");
+            }
+        }
+        example.createCriteria().andBetween("price", request.getPriceGt(), request.getPriceLte());
+        List<Item> items = itemMapper.selectByExample(example);
 //        Long num = panelContentMapper.selectAllItemsNum();
         Long num = itemMapper.selectAllNum();
 
