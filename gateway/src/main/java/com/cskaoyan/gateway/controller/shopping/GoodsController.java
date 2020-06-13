@@ -5,6 +5,7 @@ import com.mall.shopping.IProductService;
 import com.mall.shopping.dto.AllProductRequest;
 import com.mall.shopping.dto.AllProductResponse;
 import com.mall.user.annotation.Anoymous;
+import io.swagger.annotations.Api;
 import org.apache.dubbo.config.annotation.Reference;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Anoymous
 @RestController
 @RequestMapping("shopping")
+@Api(tags = "GoodsController",description = "分页显示商品总数")
 public class GoodsController {
 
     @Reference(timeout = 3000,check = false)

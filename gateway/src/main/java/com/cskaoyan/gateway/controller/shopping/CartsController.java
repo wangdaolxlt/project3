@@ -55,7 +55,10 @@ public class CartsController {
     }
 
     @PostMapping("carts")
-    public ResponseData carts(@RequestBody AddCartRequest addCartRequest) {
+    public ResponseData carts(@RequestBody AddCartRequestBody addCartRequestBody) {
+        AddCartRequest addCartRequest = new AddCartRequest();
+        addCartRequest.setItemId(addCartRequestBody.getProductId());
+        addCartRequest.setNum(addCartRequestBody.getProductNum());
 
         AddCartResponse response = cartService.addToCart(addCartRequest);
 

@@ -252,23 +252,22 @@ public class IUserServiceImpl implements IUserService {
             userVerifyResponse.setMsg(SysRetCodeConstants.USERVERIFY_INFOR_INVALID.getMessage());
             return userVerifyResponse;
         }
-        // 存在该用户
-        Example memberExample = new Example(Member.class);
-        memberExample.createCriteria().andEqualTo("username", userVerifyRequest.getUserName());
-        Member memberRecord = new Member();
-        memberRecord.setIsVerified("Y");
-        int updateMemberEffectiveRows = memberMapper.updateByExampleSelective(memberRecord, memberExample);
-        if(updateMemberEffectiveRows == 0){
-            // member表不存在该数据
-            // 手动回滚事务
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            userVerifyResponse.setCode(SysRetCodeConstants.DB_EXCEPTION.getCode());
-            userVerifyResponse.setMsg(SysRetCodeConstants.DB_EXCEPTION.getMessage());
-            return userVerifyResponse;
-        }
+        // // 存在该用户
+        // Example memberExample = new Example(Member.class);
+        // memberExample.createCriteria().andEqualTo("username", userVerifyRequest.getUserName());
+        // Member memberRecord = new Member();
+        // memberRecord.setIsVerified("Y");
+        // int updateMemberEffectiveRows = memberMapper.updateByExampleSelective(memberRecord, memberExample);
+        // if(updateMemberEffectiveRows == 0){
+        //     // member表不存在该数据
+        //     // 手动回滚事务
+        //     TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+        //     userVerifyResponse.setCode(SysRetCodeConstants.DB_EXCEPTION.getCode());
+        //     userVerifyResponse.setMsg(SysRetCodeConstants.DB_EXCEPTION.getMessage());
+        //     return userVerifyResponse;
+        // }
         userVerifyResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
         userVerifyResponse.setMsg(SysRetCodeConstants.SUCCESS.getMessage());
         return userVerifyResponse;
-
     }
 }

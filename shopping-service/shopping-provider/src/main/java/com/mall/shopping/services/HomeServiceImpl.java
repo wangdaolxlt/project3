@@ -51,13 +51,16 @@ public class HomeServiceImpl implements IHomeService {
             List<PanelContentItemDto> panelContentItemDtos = contentConverter.panelContentItem2Dto(panelContentItems);
             for (PanelContentItemDto panelContentItemDto : panelContentItemDtos) {
                 ProductDto productDto = null;
+                Item item = null;
                 //TODO 注意连接item表的时候，如果productId=null,item返回null
                 if(panelContentItemDto.getProductId() != null){
-                    Item item = itemMapper.selectByPrimaryKey(panelContentItemDto.getProductId());
+                    item = itemMapper.selectByPrimaryKey(panelContentItemDto.getProductId());
+//                    System.out.println(item);
                     //productName  salePrice subTitle 只要这三个字段
                     productDto = productConverter.item2Dto(item);
+                }else {
+                    productDto = new ProductDto(null, null, null, null, null);
                 }
-                productDto= new ProductDto(null,null,null,null,null);
                 panelContentItemDto.setProductName(productDto.getProductName());
                 panelContentItemDto.setSalePrice(productDto.getSalePrice());
                 panelContentItemDto.setSubTitle(productDto.getSubTitle());
