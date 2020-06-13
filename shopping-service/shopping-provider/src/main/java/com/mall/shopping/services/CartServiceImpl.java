@@ -56,6 +56,7 @@ public class CartServiceImpl implements ICartService {
     public CartListResponse getCartListById(CartListByIdRequest request) {
         Long userId = request.getUserId();
         String userIdS = String.valueOf(userId);
+        userIdS = "user_" + userIdS;
         String data = cacheManager.checkCache(userIdS);
 
         List<CartProductDto> list = JSON.parseArray(data, CartProductDto.class);
@@ -66,7 +67,8 @@ public class CartServiceImpl implements ICartService {
 
     @Override
     public AddCartResponse addToCart(AddCartRequest request) {
-        String id = String.valueOf(request.getUserId());
+        String userIdS = String.valueOf(request.getUserId());
+        userIdS = "user_" + userIdS;
         AddCartResponse response = new AddCartResponse();
         Gson gson = new Gson();
 //        Example example = new Example(Item.class);
@@ -74,7 +76,7 @@ public class CartServiceImpl implements ICartService {
         Item item = itemMapper.selectByPrimaryKey(request.getItemId());
         CartProductDto cartProductDto = CartItemConverter.item2Dto(item);
         cartProductDto.setProductNum(request.getNum().longValue());
-        String data = cacheManager.checkCache(id);
+        String data = cacheManager.checkCache(userIdS);
 
 
         if (!StringUtils.isEmpty(data)) {
@@ -84,14 +86,14 @@ public class CartServiceImpl implements ICartService {
                     productDto.setProductNum(productDto.getProductNum()
                             + cartProductDto.getProductNum());
                     String json = gson.toJson(list);
-                    cacheManager.setCache(id, json, 3000);
+                    cacheManager.setCache(userIdS, json, 3000);
                     response.setResult("成功");
                     return response;
                 }
             }
             list.add(cartProductDto);
             String json = gson.toJson(list);
-            cacheManager.setCache(id, json, 3000);
+            cacheManager.setCache(userIdS, json, 3000);
             response.setResult("成功");
             return response;
 
@@ -99,7 +101,7 @@ public class CartServiceImpl implements ICartService {
         ArrayList<CartProductDto> dtos = new ArrayList<>();
         dtos.add(cartProductDto);
         String json = gson.toJson(dtos);
-        cacheManager.setCache(id, json, 3000);
+        cacheManager.setCache(userIdS, json, 3000);
         response.setResult("成功");
         return response;
     }
