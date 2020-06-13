@@ -116,7 +116,12 @@ public class IUserServiceImpl implements IUserService {
 
         // 3. 发送用户激活邮件
         // TODO: 2020/6/11  发送用户激活邮件, 消息中间件MQ优化
-        sendEmail(userVerifyRecord.getUuid(), registerRequest);
+        try {
+            sendEmail(userVerifyRecord.getUuid(), registerRequest);
+        } catch (Exception e) {
+            log.info("激活邮件发送失败");
+            e.printStackTrace();
+        }
 
         // 用户插入成功
         registerResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());
