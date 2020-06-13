@@ -10,19 +10,19 @@ import com.mall.shopping.dto.*;
 public interface ICartService {
 
 
-//    /**
-//     * 获得购物车商品列表
-//     * @param request
-//     * @return
-//     */
-//    CartListByIdResponse getCartListById(CartListByIdRequest request);
+    /**
+     * 获得购物车商品列表
+     * @param request
+     * @return
+     */
+    CartListByIdResponse getCartListById(CartListByIdRequest request);
 
-//    /**
-//     * 添加商品到购物车
-//     * @param request
-//     * @return
-//     */
-//    AddCartResponse addToCart(AddCartRequest request);
+    /**
+     * 添加商品到购物车
+     * @param request
+     * @return
+     */
+    AddCartResponse addToCart(AddCartRequest request);
 
 
     /**
@@ -51,7 +51,7 @@ public interface ICartService {
      * @param request
      * @return
      */
-    DeleteCheckedItemResponse deleteCheckedItem(DeleteCheckedItemRequest request);
+    DeleteCheckedItemResposne deleteCheckedItem(DeleteCheckedItemRequest request);
 
 
 //    /**

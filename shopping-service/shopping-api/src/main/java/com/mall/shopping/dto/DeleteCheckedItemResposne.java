@@ -5,5 +5,5 @@ import com.mall.commons.result.AbstractResponse;
 /**
  * Created by ciggar on 2019/7/23.
  */
-public class DeleteCheckedItemResponse extends AbstractResponse{
+public class DeleteCheckedItemResposne extends AbstractResponse{
 }

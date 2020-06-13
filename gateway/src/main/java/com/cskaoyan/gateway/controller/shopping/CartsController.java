@@ -125,7 +125,7 @@ public class CartsController {
     public ResponseData deleteCheckedItem(@PathVariable("id") Long uid){
         DeleteCheckedItemRequest request = new DeleteCheckedItemRequest();
         request.setUserId(uid);
-        DeleteCheckedItemResponse response = cartService.deleteCheckedItem(request);
+        DeleteCheckedItemResposne response = cartService.deleteCheckedItem(request);
         if(response.getCode().equals(ShoppingRetCode.SUCCESS.getCode())){
             return new ResponseUtil<>().setData(ShoppingRetCode.SUCCESS.getMessage());
         }
