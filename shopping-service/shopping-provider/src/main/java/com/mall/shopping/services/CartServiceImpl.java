@@ -199,8 +199,8 @@ public class CartServiceImpl implements ICartService {
                     }
                 }*/
                 for (Iterator iterator = cartList.iterator(); iterator.hasNext();) {
-                    CartProductDto temp = (CartProductDto) iterator.next();
-                    if("true".equals(temp.getChecked())){
+                    CartProductDto item = (CartProductDto) iterator.next();
+                    if(request.getItemId().equals(item.getProductId())){
                         iterator.remove();
                     }
                 }
