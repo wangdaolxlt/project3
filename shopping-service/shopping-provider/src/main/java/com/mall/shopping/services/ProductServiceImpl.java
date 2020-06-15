@@ -79,6 +79,7 @@ public class ProductServiceImpl implements IProductService {
         String sort = request.getSort();
 //        List<PanelContentItemDto> panelContentItems = panelContentMapper.selectAllItems();
         Example example = new Example(Item.class);
+        example.createCriteria().andEqualTo("status",1);//只显示上架商品
         if (!("".equals(sort))) {
             if ("1".equals(sort)) {
                 example.setOrderByClause("price");

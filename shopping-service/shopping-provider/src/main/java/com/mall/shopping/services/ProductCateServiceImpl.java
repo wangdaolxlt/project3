@@ -33,7 +33,7 @@ public class ProductCateServiceImpl implements IProductCateService {
     @Override
     public AllProductCateResponse getAllProductCategory() {
         AllProductCateResponse allProductCateResponse = new AllProductCateResponse();
-        Example example = new Example(Item.class);
+        Example example = new Example(ItemCat.class);
         example.setOrderByClause("sort_order");//升序排列
         //只显示启用的
         example.createCriteria().andEqualTo("status",1);
