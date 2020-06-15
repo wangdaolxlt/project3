@@ -53,6 +53,12 @@ public class ValidateHandler extends AbstractTransHandler {
 
             createOrderContext.setBuyerNickName(username);
         }*/
+        CreateOrderContext createOrderContext = (CreateOrderContext) context;
+        QueryMemberRequest request = new QueryMemberRequest();
+        request.setUserId(createOrderContext.getUserId());
+        QueryMemberResponse response = memberService.queryMemberById(request);
+        String username = response.getUsername();
+        createOrderContext.setBuyerNickName(username);
         return true;
     }
 }

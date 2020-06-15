@@ -96,8 +96,8 @@ public class UserController {
         KaptchaCodeResponse response = iKaptchaService.validateKaptchaCode(request);
         // 验证不通过
         // TODO: 2020/6/11 验证不通过处理
-        // if (!response.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
-        if (!true) {
+        if (!response.getCode().equals(SysRetCodeConstants.SUCCESS.getCode())) {
+//        if (!true) {
             return new ResponseUtil<>().setErrorMsg(response.getMsg());
         }
 

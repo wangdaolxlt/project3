@@ -21,7 +21,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -55,6 +57,27 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 	 */
 	@Override
 	public CreateOrderResponse createOrder(CreateOrderRequest request) {
+		/**
+		 * 先对request进行一下处理
+		 */
+		//校验商品checked状态
+		List<CartProductDto> list = request.getCartProductDtoList();
+		for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+			CartProductDto temp = (CartProductDto) iterator.next();
+			if("false".equals(temp.getChecked())){
+				iterator.remove();
+			}
+		}
+		//校验总金额数量
+		BigDecimal total = new BigDecimal(0);
+		for (CartProductDto cartProductDto : list) {
+			total = total.add(cartProductDto.getSalePrice().multiply(new BigDecimal(cartProductDto.getProductNum())));
+		}
+		request.setCartProductDtoList(list);
+		request.setOrderTotal(total);
+		/**
+		 * 正式处理下订单
+		 */
 		CreateOrderResponse response = new CreateOrderResponse();
 		try {
 			//创建pipeline对象
