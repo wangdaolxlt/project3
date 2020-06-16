@@ -51,7 +51,7 @@ spring:
 #      value-serializer: org.apache.kafka.common.serialization.StringSerializer
 mq:
   nameserver:
-    addr: 127.0.0.1:9876
+    addr: 192.168.0.101:9876
   topicname: userTopic
   producergroup: producer_group2
   consumergroup: consumer_group2

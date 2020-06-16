@@ -16,8 +16,21 @@ public interface OrderCoreService {
      */
     CreateOrderResponse createOrder(CreateOrderRequest request);
 
+    /**
+     * 创建秒杀订单
+     */
 
+    /**
+     * 取消订单
+     * @param orderId
+     * @return
+     */
     CancelOrderResponse cancelOrder(String orderId);
 
+    /**
+     * 删除订单
+     * @param request
+     * @return
+     */
     DeleteOrderResponse deleteOrder(DeleteOrderRequest request);
 }

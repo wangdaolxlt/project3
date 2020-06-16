@@ -40,7 +40,8 @@ public class UserProducer {
         defaultMQProducer = new DefaultMQProducer(producerGroup);
 
         defaultMQProducer.setNamesrvAddr(address);
-
+        log.info("topic----" + topicName);
+        log.info("add-----" + address);
         try {
             defaultMQProducer.start();
         } catch (MQClientException e) {
@@ -57,6 +58,7 @@ public class UserProducer {
         Message message = new Message(topicName, jsonStr.getBytes(Charset.forName("utf-8")));
         try {
             defaultMQProducer.send(message);
+            log.info("发送邮箱成功");
         } catch (MQClientException e) {
             e.printStackTrace();
         } catch (RemotingException e) {

@@ -1,6 +1,7 @@
 package com.mall.user.rocketmq;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.mall.user.IUserService;
 import com.mall.user.dto.UserRegisterRequest;
 import com.mall.user.services.IUserServiceImpl;
@@ -52,6 +53,7 @@ public class UserConsumer {
         try {
             //订阅
             consumer.subscribe(topicName,"*");
+            System.out.println(topicName);
         } catch (MQClientException e) {
             e.printStackTrace();
         }
@@ -61,13 +63,24 @@ public class UserConsumer {
         consumer.registerMessageListener(new MessageListenerConcurrently() {
             @Override
             public ConsumeConcurrentlyStatus consumeMessage(List<MessageExt> list, ConsumeConcurrentlyContext consumeConcurrentlyContext) {
-                MessageExt messageExt = list.get(0);
-                byte[] body = messageExt.getBody();
-                String bodyStr = new String(body);
-                Map map = JSON.parseObject(bodyStr, Map.class);
-                String uuid = (String) map.get("uuid");
-                UserRegisterRequest registerRequest = (UserRegisterRequest) map.get("registerRequest");
-                userService.sendEmail(uuid, registerRequest);
+                log.info("收到");
+                try {
+                    MessageExt messageExt = list.get(0);
+                    byte[] body = messageExt.getBody();
+                    String bodyStr = new String(body);
+                    Map map = JSON.parseObject(bodyStr, Map.class);
+                    String uuid = (String) map.get("uuid");
+                    JSONObject registerRequest = (JSONObject) map.get("registerRequest");
+                    String userName = (String) registerRequest.get("userName");
+                    String email = (String) registerRequest.get("email");
+                    UserRegisterRequest request = new UserRegisterRequest();
+                    request.setEmail(email);
+                    request.setUserName(userName);
+                    userService.sendEmail(uuid, request);
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+
                 return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
             }
         });

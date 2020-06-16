@@ -50,8 +50,7 @@ public class OrderCoreServiceImpl implements OrderCoreService {
     OrderProcessPipelineFactory orderProcessPipelineFactory;
 	@Autowired
 	StockMapper stockMapper;
-	@Autowired
-	OrderProducer orderProducer;
+
 
 	/**
 	 * 创建订单的处理流程
@@ -95,8 +94,6 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 
 			//把处理结果转换为response
 			response = (CreateOrderResponse) context.getConvert().convertCtx2Respond(context);
-			String orderId = response.getOrderId();
-			orderProducer.delayCancelOrder(orderId);
 		} catch (Exception e) {
 			log.error("OrderCoreServiceImpl.createOrder Occur Exception :" + e);
 			ExceptionProcessorUtils.wrapperHandlerException(response, e);

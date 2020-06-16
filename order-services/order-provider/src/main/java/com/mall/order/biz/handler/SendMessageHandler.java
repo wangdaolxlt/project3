@@ -2,6 +2,7 @@ package com.mall.order.biz.handler;
 
 import com.mall.order.biz.context.CreateOrderContext;
 import com.mall.order.biz.context.TransHandlerContext;
+import com.mall.order.rocketmq.OrderProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,8 @@ import java.io.UnsupportedEncodingException;
 @Slf4j
 public class SendMessageHandler extends AbstractTransHandler {
 
+	@Autowired
+	OrderProducer orderProducer;
 
 	@Override
 	public boolean isAsync() {
@@ -25,7 +28,9 @@ public class SendMessageHandler extends AbstractTransHandler {
 
 	@Override
 	public boolean handle(TransHandlerContext context) {
-
+		CreateOrderContext createOrderContext = (CreateOrderContext) context;
+		String orderId = createOrderContext.getOrderId();
+		orderProducer.delayCancelOrder(orderId);
         return true;
 	}
 }
