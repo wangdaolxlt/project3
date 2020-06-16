@@ -10,11 +10,13 @@ import com.mall.user.dal.entitys.UserVerify;
 import com.mall.user.dal.persistence.MemberMapper;
 import com.mall.user.dal.persistence.UserVerifyMapper;
 import com.mall.user.dto.*;
+import com.mall.user.rocketmq.UserProducer;
 import com.mall.user.utils.JwtTokenUtils;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.config.annotation.Service;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.mail.SimpleMailMessage;
@@ -51,6 +53,8 @@ public class IUserServiceImpl implements IUserService {
     MemberConverter memberConverter;
     @Autowired
     JavaMailSender javaMailSender;
+    @Autowired
+    UserProducer userProducer;
     /**
      * 邮件主题
      */
@@ -119,7 +123,7 @@ public class IUserServiceImpl implements IUserService {
 
         // 3. 发送用户激活邮件
         // TODO: 2020/6/11  发送用户激活邮件, 消息中间件MQ优化
-        try {
+/*        try {
             ExecutorService executorService = Executors.newSingleThreadExecutor();
             executorService.submit(new Runnable() {
                 @Override
@@ -130,9 +134,14 @@ public class IUserServiceImpl implements IUserService {
         } catch (Exception e) {
             log.info("激活邮件发送失败");
             e.printStackTrace();
-        }
+        }*/
         // 通过异步线程来实现 消息队列
-
+        try{
+            userProducer.sendEmail(userVerifyRecord.getUuid(), registerRequest);
+        } catch (Exception e){
+            log.info("激活邮件发送失败");
+            e.printStackTrace();
+        }
 
         // 用户插入成功
         registerResponse.setCode(SysRetCodeConstants.SUCCESS.getCode());

@@ -13,6 +13,7 @@ import com.mall.order.dal.persistence.OrderMapper;
 import com.mall.order.dal.persistence.OrderShippingMapper;
 import com.mall.order.dal.persistence.StockMapper;
 import com.mall.order.dto.*;
+import com.mall.order.rocketmq.OrderProducer;
 import com.mall.order.utils.ExceptionProcessorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
@@ -23,6 +24,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,6 +50,8 @@ public class OrderCoreServiceImpl implements OrderCoreService {
     OrderProcessPipelineFactory orderProcessPipelineFactory;
 	@Autowired
 	StockMapper stockMapper;
+	@Autowired
+	OrderProducer orderProducer;
 
 	/**
 	 * 创建订单的处理流程
@@ -91,6 +95,8 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 
 			//把处理结果转换为response
 			response = (CreateOrderResponse) context.getConvert().convertCtx2Respond(context);
+			String orderId = response.getOrderId();
+			orderProducer.delayCancelOrder(orderId);
 		} catch (Exception e) {
 			log.error("OrderCoreServiceImpl.createOrder Occur Exception :" + e);
 			ExceptionProcessorUtils.wrapperHandlerException(response, e);
@@ -100,24 +106,26 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 
 	/**
 	 * 取消订单
-	 * @param request
+	 * @param orderId
+	 * @return
 	 */
 	@Override
 	@Transactional
-	public CancelOrderResponse cancelOrder(CancelOrderRequest request) {
+	public CancelOrderResponse cancelOrder(String orderId) {
 		CancelOrderResponse response = new CancelOrderResponse();
 		//通过id查当前订单的状态
-		Order order = orderMapper.selectByPrimaryKey(request.getOrderId());
+		Order order = orderMapper.selectByPrimaryKey(orderId);
 		/**
-		 * 状态在已发货之前才可以取消订单
+		 * 先判断需不需要取消，已经付款就不需要取消订单
 		 */
-		if(order.getStatus() > 2){
-			response.setMsg("订单已发货无法取消订单");
+		if(order.getStatus() > 0){
+			response.setCode(OrderRetCode.SUCCESS.getCode());
 			return response;
 		}
 
 		//取消订单，即将订单的status改为交易取消
 		order.setStatus(7);
+		order.setUpdateTime(new Date());
 		int updateOrder = orderMapper.updateByPrimaryKey(order);
 		if(updateOrder < 1){
 		    response.setCode(OrderRetCode.DB_EXCEPTION.getCode());
@@ -127,7 +135,7 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 
 		//查询订单中的商品
 		Example orderItemExample = new Example(OrderItem.class);
-		orderItemExample.createCriteria().andEqualTo("orderId", request.getOrderId());
+		orderItemExample.createCriteria().andEqualTo("orderId", orderId);
 		List<OrderItem> orderItems = orderItemMapper.selectByExample(orderItemExample);
 		List<Long> productIds = new ArrayList<>();
 		for (OrderItem orderItem : orderItems) {

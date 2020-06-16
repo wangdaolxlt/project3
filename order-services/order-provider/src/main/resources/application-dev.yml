@@ -29,6 +29,12 @@ spring:
         max-wait: 3000
         min-idle: 4
 
+mq:
+  nameserver:
+    addr: 127.0.0.1:9876
+  topicname: orderTopic
+  producergroup: producer_group
+  consumergroup: consumer_group
 dubbo:
   application:
     name: order-service

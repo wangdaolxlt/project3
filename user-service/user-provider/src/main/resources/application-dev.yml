@@ -52,7 +52,9 @@ spring:
 mq:
   nameserver:
     addr: 127.0.0.1:9876
-  topicname: user-register-succ-topic
+  topicname: userTopic
+  producergroup: producer_group2
+  consumergroup: consumer_group2
 dubbo:
   application:
     name: user-service

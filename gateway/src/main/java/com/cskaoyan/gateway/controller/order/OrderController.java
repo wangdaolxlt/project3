@@ -101,7 +101,7 @@ public class OrderController {
         request.setOrderId(id);
         request.requestCheck();
 
-        CancelOrderResponse response = orderCoreService.cancelOrder(request);
+        CancelOrderResponse response = orderCoreService.cancelOrder(id);
         if(response.getCode().equals(OrderRetCode.SUCCESS.getCode())){
             return new ResponseUtil<>().setData("成功");
         }
