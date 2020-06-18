@@ -13,7 +13,7 @@ import com.mall.order.dal.persistence.OrderMapper;
 import com.mall.order.dal.persistence.OrderShippingMapper;
 import com.mall.order.dto.*;
 import com.mall.order.utils.ExceptionProcessorUtils;
-import com.mall.user.constants.SysRetCodeConstants;
+//import com.mall.user.constants.SysRetCodeConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.Service;
 import org.checkerframework.checker.units.qual.A;
