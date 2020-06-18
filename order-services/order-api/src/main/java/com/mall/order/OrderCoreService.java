@@ -1,6 +1,8 @@
 package com.mall.order;
 
 import com.mall.order.dto.*;
+import com.mall.promo.dto.SeckillOrderRequest;
+import com.mall.promo.dto.SeckillOrderResponse;
 
 /**
  *  ciggar
@@ -19,6 +21,8 @@ public interface OrderCoreService {
     /**
      * 创建秒杀订单
      */
+    SeckillOrderResponse createSeckillOrder(SeckillOrderRequest request);
+
 
     /**
      * 取消订单

@@ -65,6 +65,7 @@ public class InitOrderHandler extends AbstractTransHandler {
         order.setCreateTime(new Date());
         order.setUpdateTime(new Date());
         order.setStatus(OrderConstants.ORDER_STATUS_INIT);
+        order.setUniqueKey(((CreateOrderContext) context).getUniqueKey());
         int orderInsert = orderMapper.insert(order);
         if(orderInsert < 1){
             throw new BizException(OrderRetCode.DB_EXCEPTION.getCode(), OrderRetCode.DB_EXCEPTION.getMessage());

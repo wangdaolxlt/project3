@@ -9,5 +9,5 @@
         <result column="yyyymmdd" jdbcType="VARCHAR" property="yyyymmdd" />
     </resultMap>
     <sql id="Base_Column_List">
-    id, ps_id, item_id, seckill_price, item_stock</sql>
+    id, session_id, start_time, end_time, yyyymmdd</sql>
 </mapper>

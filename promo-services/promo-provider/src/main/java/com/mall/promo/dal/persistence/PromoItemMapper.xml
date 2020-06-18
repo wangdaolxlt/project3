@@ -10,4 +10,27 @@
   </resultMap>
   <sql id="Base_Column_List">
     id, ps_id, item_id, seckill_price, item_stock</sql>
+
+  <update id="updatePromoItemStock">
+    update tb_promo_item
+    set item_stock = item_stock -1
+    where id = #{id} and item_stock - 1 >= 0
+
+  </update>
+    <select id="findPromoItemStockForUpdate" resultMap="BaseResultMap">
+      select <include refid="Base_Column_List"/>
+      from tb_promo_item where ps_id = #{psId} and item_id = #{itemId}
+      for update
+    </select>
+
+  <update id="decreaseStock">
+      UPDATE tb_promo_item
+      SET item_stock = item_stock - 1
+      WHERE
+      ps_id = #{psId}
+      AND
+      item_id = #{productId}
+      AND
+      item_stock > 0
+    </update>
 </mapper>

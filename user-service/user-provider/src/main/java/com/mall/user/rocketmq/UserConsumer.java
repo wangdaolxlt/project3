@@ -71,8 +71,10 @@ public class UserConsumer {
                     Map map = JSON.parseObject(bodyStr, Map.class);
                     String uuid = (String) map.get("uuid");
                     JSONObject registerRequest = (JSONObject) map.get("registerRequest");
+
                     String userName = (String) registerRequest.get("userName");
                     String email = (String) registerRequest.get("email");
+
                     UserRegisterRequest request = new UserRegisterRequest();
                     request.setEmail(email);
                     request.setUserName(userName);

@@ -7,6 +7,11 @@ public enum PromoRetCode {
 
     REQUISITE_PARAMETER_NOT_EXIST       ("004073", "必要的参数不能为空"),
 
+    PROMO_NOT_EXIST                     ("005074", "秒杀活动不存在"),
+    PROMO_ITEM_NOT_EXIST                ("005075", "秒杀活动商品不存在"),
+    PROMO_ITEM_STOCK_NOT_ENOUGH         ("005076", "商品库存不足"),
+    PROMO_FAIL                          ("005077", "秒杀下单失败"),
+
     DB_EXCEPTION                        ("004097", "数据库异常"),
     SYSTEM_TIMEOUT                      ("004098", "系统超时"),
     SYSTEM_ERROR                        ("004099", "系统错误");

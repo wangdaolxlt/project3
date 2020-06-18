@@ -1,12 +1,16 @@
 package com.mall.order.services;
 
+import com.mall.commons.tool.exception.BizException;
 import com.mall.order.OrderCoreService;
 import com.mall.order.biz.TransOutboundInvoker;
 import com.mall.order.biz.context.AbsTransHandlerContext;
+import com.mall.order.biz.context.CreateOrderContext;
 import com.mall.order.biz.factory.OrderProcessPipelineFactory;
 import com.mall.order.constant.OrderRetCode;
+import com.mall.order.constants.OrderConstants;
 import com.mall.order.dal.entitys.Order;
 import com.mall.order.dal.entitys.OrderItem;
+import com.mall.order.dal.entitys.OrderShipping;
 import com.mall.order.dal.entitys.Stock;
 import com.mall.order.dal.persistence.OrderItemMapper;
 import com.mall.order.dal.persistence.OrderMapper;
@@ -15,7 +19,17 @@ import com.mall.order.dal.persistence.StockMapper;
 import com.mall.order.dto.*;
 import com.mall.order.rocketmq.OrderProducer;
 import com.mall.order.utils.ExceptionProcessorUtils;
+import com.mall.promo.constants.PromoRetCode;
+import com.mall.promo.dto.SeckillOrderRequest;
+import com.mall.promo.dto.SeckillOrderResponse;
+import com.mall.shopping.IProductService;
+import com.mall.shopping.dto.ProductDetailDto;
+import com.mall.shopping.dto.ProductDetailResponse;
+import com.mall.user.IMemberService;
+import com.mall.user.dto.QueryMemberRequest;
+import com.mall.user.dto.QueryMemberResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.Reference;
 import org.apache.dubbo.config.annotation.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,10 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  *  ciggar
@@ -51,6 +62,10 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 	@Autowired
 	StockMapper stockMapper;
 
+	@Reference(timeout = 3000, check = false)
+	private IProductService productService;
+	@Reference(timeout = 3000, check = false)
+	private IMemberService memberService;
 
 	/**
 	 * 创建订单的处理流程
@@ -98,6 +113,81 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 			log.error("OrderCoreServiceImpl.createOrder Occur Exception :" + e);
 			ExceptionProcessorUtils.wrapperHandlerException(response, e);
 		}
+		return response;
+	}
+
+	/**
+	 * 创建秒杀订单
+	 */
+	@Override
+	public SeckillOrderResponse createSeckillOrder(SeckillOrderRequest request) {
+		SeckillOrderResponse response = new SeckillOrderResponse();
+		/**
+		 * 查询用户昵称
+		 */
+		QueryMemberRequest memberRequest = new QueryMemberRequest();
+		memberRequest.setUserId(request.getUserId());
+		QueryMemberResponse memberResponse = memberService.queryMemberById(memberRequest);
+		String username = memberResponse.getUsername();
+		/**
+		 * 插入订单表
+		 */
+		Order order = new Order();
+		String orderId = UUID.randomUUID().toString();
+		order.setOrderId(orderId);
+		order.setUserId(request.getUserId());
+		order.setBuyerNick(username);
+		order.setPayment(request.getSeckillPrice());
+		order.setCreateTime(new Date());
+		order.setUpdateTime(new Date());
+		order.setStatus(OrderConstants.ORDER_STATUS_INIT);
+		order.setUniqueKey(request.getUniqueKey());
+		int orderInsert = orderMapper.insert(order);
+		if(orderInsert < 1){
+			response.setCode(OrderRetCode.DB_EXCEPTION.getCode());
+			response.setMsg(OrderRetCode.DB_EXCEPTION.getMessage());
+			return response;
+		}
+		/**
+		 * 插入订单商品关联表
+		 */
+		ProductDetailResponse productDetailResp = productService.getProductDetails(request.getProductId());
+		ProductDetailDto productDetailDto = productDetailResp.getProductDetailDto();
+		OrderItem orderItem = new OrderItem();
+		String orderItemId = UUID.randomUUID().toString();
+		orderItem.setId(orderItemId);
+		orderItem.setItemId(request.getProductId());
+		orderItem.setOrderId(orderId);
+		orderItem.setNum(1);
+		orderItem.setPrice(request.getSeckillPrice().doubleValue());
+		orderItem.setTitle(productDetailDto.getProductName());
+		orderItem.setPicPath(productDetailDto.getProductImageBig());
+		orderItem.setTotalFee(request.getSeckillPrice().doubleValue());
+		orderItem.setStatus(1);
+		int orderItemInsert = orderItemMapper.insert(orderItem);
+		if(orderItemInsert < 1){
+			response.setCode(OrderRetCode.DB_EXCEPTION.getCode());
+			response.setMsg(OrderRetCode.DB_EXCEPTION.getMessage());
+			return response;
+		}
+		/**
+		 * 生成邮寄信息
+		 */
+		OrderShipping orderShipping = new OrderShipping();
+		orderShipping.setOrderId(orderId);
+		orderShipping.setReceiverName(request.getUserName());
+		orderShipping.setReceiverAddress(request.getStreetName());
+		orderShipping.setReceiverMobile(request.getTel());
+		orderShipping.setCreated(new Date());
+		orderShipping.setUpdated(new Date());
+		int insert = orderShippingMapper.insert(orderShipping);
+		if(insert < 1){
+			response.setCode(OrderRetCode.SHIPPING_DB_SAVED_FAILED.getCode());
+			response.setMsg(OrderRetCode.SHIPPING_DB_SAVED_FAILED.getMessage());
+			return response;
+		}
+		response.setCode(PromoRetCode.SUCCESS.getCode());
+		response.setMsg(PromoRetCode.SUCCESS.getMessage());
 		return response;
 	}
 

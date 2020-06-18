@@ -1,7 +1,6 @@
 package com.mall.promo;
 
-import com.mall.promo.dto.SeckillListRequest;
-import com.mall.promo.dto.SeckillListResponse;
+import com.mall.promo.dto.*;
 
 /**
  * @PackgeName: com.mall.promo
@@ -13,4 +12,14 @@ import com.mall.promo.dto.SeckillListResponse;
 public interface PromoService {
 
     SeckillListResponse getSeckillList(SeckillListRequest seckillListRequest);
+
+    PromoProductDetailResponse getPromoProductDetail(PromoProductDetailRequest request);
+
+    SeckillOrderResponse createSeckillOrder(SeckillOrderRequest request);
+    /**
+     * 事务型秒杀下单
+     * @param request
+     * @return
+     */
+    SeckillOrderResponse createSeckillOrderInTransaction(SeckillOrderRequest request);
 }
