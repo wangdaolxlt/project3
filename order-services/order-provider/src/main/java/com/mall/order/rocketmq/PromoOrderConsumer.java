@@ -87,8 +87,10 @@ public class PromoOrderConsumer {
 
                     // 生成订单 插入物流信息
                     SeckillOrderResponse response = orderCoreService.createSeckillOrder(request);
+                    log.info("秒杀订单消费结果resp:{}",JSON.toJSON(response));
 
                     if (response.getCode().equals(OrderRetCode.SUCCESS.getCode())) {
+                        log.info("秒杀订单返回了成功信息-------------");
                         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
                     }else {
                         return ConsumeConcurrentlyStatus.RECONSUME_LATER;

@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -79,7 +80,8 @@ public class ProductServiceImpl implements IProductService {
         String sort = request.getSort();
 //        List<PanelContentItemDto> panelContentItems = panelContentMapper.selectAllItems();
         Example example = new Example(Item.class);
-        example.createCriteria().andEqualTo("status",1);//只显示上架商品
+        example.createCriteria().andEqualTo("status",1)
+                .andBetween("price", request.getPriceGt(), request.getPriceLte());//只显示上架商品
         if (!("".equals(sort))) {
             if ("1".equals(sort)) {
                 example.setOrderByClause("price");
@@ -87,7 +89,7 @@ public class ProductServiceImpl implements IProductService {
                 example.setOrderByClause("price" + " desc");
             }
         }
-        example.createCriteria().andBetween("price", request.getPriceGt(), request.getPriceLte());
+
         List<Item> items = itemMapper.selectByExample(example);
 //        Long num = panelContentMapper.selectAllItemsNum();
         Long num = itemMapper.selectAllNum();

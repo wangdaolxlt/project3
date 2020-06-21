@@ -2,6 +2,7 @@ package com.mall.promo.service;
 
 import com.mall.order.OrderCoreService;
 import com.mall.promo.PromoService;
+import com.mall.promo.cache.CacheManager;
 import com.mall.promo.constants.PromoRetCode;
 import com.mall.promo.converter.PromoConverter;
 import com.mall.promo.dal.entitys.PromoItem;
@@ -50,6 +51,8 @@ public class PromoServiceImpl implements PromoService{
 
     @Autowired
     private PromoMqProducer promoMqProducer;
+    @Autowired
+    private CacheManager cacheManager;
 
     /**
      * 获取秒杀商品列表接口
@@ -187,8 +190,17 @@ public class PromoServiceImpl implements PromoService{
     @Override
     public SeckillOrderResponse createSeckillOrderInTransaction(SeckillOrderRequest request) {
         SeckillOrderResponse response = new SeckillOrderResponse();
+        String stockKey = "stock_" + request.getPsId() + "_" + request.getProductId();
+        String stockValue  = cacheManager.checkCache(stockKey);
+        if("empty".equals(stockValue)){
+            response.setCode(PromoRetCode.PROMO_ITEM_STOCK_NOT_ENOUGH.getCode());
+            response.setMsg(PromoRetCode.PROMO_ITEM_STOCK_NOT_ENOUGH.getMessage());
+            return response;
+        }
+
         PromoItem promoItem = promoItemMapper.findPromoItemStockForUpdate(request.getPsId(), request.getProductId());
         request.setSeckillPrice(promoItem.getSeckillPrice());
+
         Boolean ret = promoMqProducer.sendOrderMessageIntransaction(request);
         if (ret) {
             response.setInventory(promoItem.getItemStock() - 1);

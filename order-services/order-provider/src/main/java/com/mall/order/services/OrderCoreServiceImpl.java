@@ -275,4 +275,28 @@ public class OrderCoreServiceImpl implements OrderCoreService {
 		return response;
 	}
 
+	/**
+	 * 更新订单状态
+	 * @param request
+	 * @return
+	 */
+	@Override
+	public UpdateOrderResponse updateOrder(UpdateOrderRequest request) {
+		UpdateOrderResponse response = new UpdateOrderResponse();
+		String orderId = request.getOrderId();
+		Order order = new Order();
+		order.setStatus(1);
+		order.setOrderId(orderId);
+		order.setUpdateTime(new Date());
+		int updateRow = orderMapper.updateByPrimaryKeySelective(order);
+		if(updateRow < 1){
+			response.setCode(OrderRetCode.DB_EXCEPTION.getCode());
+			response.setMsg(OrderRetCode.DB_EXCEPTION.getMessage());
+			return response;
+		}
+		response.setCode(OrderRetCode.SUCCESS.getCode());
+		response.setMsg(OrderRetCode.SUCCESS.getMessage());
+		return response;
+	}
+
 }

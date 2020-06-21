@@ -81,7 +81,7 @@ public class OrderQueryServiceImpl implements OrderQueryService {
             orderDetailInfoList.add(orderDetailInfo);
         }
 
-        PageInfo<OrderDetailInfo> pageInfo = new PageInfo<>(orderDetailInfoList);
+        PageInfo<Order> pageInfo = new PageInfo<>(orders);
         long total = pageInfo.getTotal();
         OrderListResponse orderListResponse = new OrderListResponse();
         orderListResponse.setData(orderDetailInfoList);

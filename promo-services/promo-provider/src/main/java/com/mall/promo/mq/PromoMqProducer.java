@@ -2,6 +2,7 @@ package com.mall.promo.mq;
 
 import com.alibaba.fastjson.JSON;
 import com.mall.promo.cache.CacheManager;
+import com.mall.promo.dal.entitys.PromoItem;
 import com.mall.promo.dal.persistence.PromoItemMapper;
 import com.mall.promo.dto.SeckillOrderRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,7 @@ public class PromoMqProducer {
     @Autowired
     private CacheManager cacheManager;
 
+
     private TransactionMQProducer transactionMQProducer;
 
     @PostConstruct
@@ -67,6 +69,14 @@ public class PromoMqProducer {
 
                     return LocalTransactionState.ROLLBACK_MESSAGE;
                 }
+
+                //如果库存<=0 表示库存已经卖完了，我们需要在Redis里面做一个标记
+                PromoItem item = promoItemMapper.findPromoItemStockForUpdate(psId, productId);
+                String stockKey = "stock_" + psId + "_" + productId;
+                if(item.getItemStock() <= 0){
+                    cacheManager.setCache(stockKey, "empty", 3);
+                }
+                cacheManager.setCache(stockKey, "notEmpty", 3);
 
                 //假如执行本地事务成功了，打个标记
                 String key = "local_transaction_id_" + message.getTransactionId();
@@ -125,6 +135,7 @@ public class PromoMqProducer {
 
             //发送事务型消息
             transactionSendResult = transactionMQProducer.sendMessageInTransaction(message, argsMap);
+            log.info("发送了消息.....................................");
         } catch (MQClientException e) {
             e.printStackTrace();
         }

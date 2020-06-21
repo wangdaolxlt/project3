@@ -25,6 +25,7 @@ import java.util.List;
 @Component
 @Slf4j
 public class OrderConsumer {
+    //start mqbroker.cmd -n 127.0.0.1:9876 autoCreateTopicEnable=true
     @Autowired
     private OrderCoreService orderCoreService;
 

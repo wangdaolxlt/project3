@@ -37,4 +37,10 @@ public interface OrderCoreService {
      * @return
      */
     DeleteOrderResponse deleteOrder(DeleteOrderRequest request);
+
+    /**
+     * 修改订单表
+     * @param updateOrderRequest
+     */
+    UpdateOrderResponse updateOrder(UpdateOrderRequest updateOrderRequest);
 }
